@@ -9,7 +9,7 @@ VibeTribe is a social media platform designed to offer a refreshing alternative 
 - [Harsh Pilankar](https://github.com/harshpilankar)
 - [Rudresh Arabekar](https://github.com/rudevhub)
 - [Krupal Maulangker](https://github.com/krupal46)
-- [Atharv Pednekar](https://github.com/atharv446546454e)
+- [Atharv Pednekar](https://github.com/atharv446546454)
 - [Subodh Ambekar](https://github.com/subodh0504)
 
 ## 🛠 Tech Stack
