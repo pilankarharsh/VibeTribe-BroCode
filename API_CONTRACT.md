@@ -1,0 +1,612 @@
+# 📱 VibeTribe Back-end API Contract
+
+## Core Features
+- Invite-only registration (users must have a valid invite code to register)
+- User registration, login, logout, and password reset
+- User profiles (view, update, search)
+- Follow/unfollow users, view followers/following
+- Create, edit, delete, and view posts (with media)
+- Like/unlike posts
+- Comment on posts (add, edit, delete, view)
+- Personalized feeds (home, explore, user posts)
+- Media upload (images/videos)
+- Account management (change password, delete account)
+- Verified user badges
+
+## Table of Contents
+1. Introduction
+2. Data Models
+3. Authentication
+4. User Endpoints
+5. Post Endpoints
+6. Feed Endpoints
+7. Media Upload
+8. Account & Settings
+
+---
+
+## 1. Introduction
+This document defines the RESTful API contract for VibeTribe application. Registration is invite-only: users must have a valid invite code to create an account. The contract covers user management, posts, comments, likes, follows, and media uploads.
+
+---
+
+## 2. Data Models
+
+### User
+```json
+{
+  "id": "string",
+  "username": "string",
+  "display_name": "string",
+  "email": "string",
+  "avatar_url": "string",
+  "bio": "string",
+  "verified": false,
+  "followers_count": 0,
+  "following_count": 0,
+  "created_at": "datetime(iso 8601)",
+  "updated_at": "datetime(iso 8601)"
+}
+```
+
+### Post
+```json
+{
+  "id": "string",
+  "author_id": "string",
+  "caption": "string",
+  "media_urls": ["string"],
+  "like_count": 0,
+  "comment_count": 0,
+  "created_at": "datetime(iso 8601)",
+  "updated_at": "datetime(iso 8601)"
+}
+```
+
+### Comment
+```json
+{
+  "id": "string",
+  "post_id": "string",
+  "author_id": "string",
+  "content": "string",
+  "created_at": "datetime(iso 8601)"
+}
+```
+
+### Like
+```json
+{
+  "user_id": "string",
+  "post_id": "string",
+  "created_at": "datetime(iso 8601)"
+}
+```
+
+### Follow
+```json
+{
+  "follower_id": "string",
+  "followed_id": "string",
+  "created_at": "datetime(iso 8601)"
+}
+```
+
+---
+
+## 3. Authentication
+
+### Register
+**Feature:** User Registration (Invite Only)
+- **Method:** POST
+- **Path:** `/api/auth/register`
+- **Description:** Register a new user account. Requires a valid invite code.
+- **Request Body:**
+```json
+{
+  "username": "string",
+  "email": "string",
+  "password": "string",
+  "invite_code": "string"
+}
+```
+- **Success Response (201 Created):**
+```json
+{
+  "token": "string",
+  "user": <User>
+}
+```
+- **Error Response (400 Bad Request):**
+```json
+{
+  "error": "Email already exists."
+}
+```
+- **Error Response (401 Unauthorized):**
+```json
+{
+  "error": "Invalid or missing invite code."
+}
+```
+
+### Login
+**Feature:** User Login
+- **Method:** POST
+- **Path:** `/api/auth/login`
+- **Description:** Log in an existing user.
+- **Request Body:**
+```json
+{
+  "email": "string",
+  "password": "string"
+}
+```
+- **Success Response (200 OK):**
+```json
+{
+  "token": "string",
+  "user": <User>
+}
+```
+- **Error Response (401 Unauthorized):**
+```json
+{
+  "error": "Invalid credentials."
+}
+```
+
+### Logout
+**Feature:** User Logout
+- **Method:** POST
+- **Path:** `/api/auth/logout`
+- **Description:** Log out the current user.
+- **Headers:** `Authorization: Bearer <token>`
+- **Success Response (204 No Content):** No content.
+- **Error Response (401 Unauthorized):**
+```json
+{
+  "error": "Not authenticated."
+}
+```
+
+### Password Reset
+**Feature:** Password Reset
+- **Method:** POST
+- **Path:** `/api/auth/forgot-password`
+- **Description:** Request a password reset email.
+- **Request Body:**
+```json
+{
+  "email": "string"
+}
+```
+- **Success Response (200 OK):**
+```json
+{
+  "message": "Reset link sent."
+}
+```
+- **Error Response (404 Not Found):**
+```json
+{
+  "error": "Email not found."
+}
+```
+
+---
+
+## 4. User Endpoints
+
+### Get User Profile
+**Feature:** View User Profile
+- **Method:** GET
+- **Path:** `/api/users/:userId`
+- **Description:** Get a user's public profile.
+- **Success Response (200 OK):** `<User>`
+- **Error Response (404 Not Found):**
+```json
+{
+  "error": "User not found."
+}
+```
+
+### Update Profile
+**Feature:** Update User Profile
+- **Method:** PATCH
+- **Path:** `/api/users/:userId`
+- **Description:** Update the current user's profile.
+- **Headers:** `Authorization: Bearer <token>`
+- **Request Body:**
+```json
+{
+  "display_name": "string",
+  "bio": "string",
+  "avatar_url": "string"
+}
+```
+- **Success Response (200 OK):** `<User>`
+- **Error Response (400 Bad Request):**
+```json
+{
+  "error": "Invalid input."
+}
+```
+
+### Follow User
+**Feature:** Follow a User
+- **Method:** POST
+- **Path:** `/api/users/:userId/follow`
+- **Description:** Follow a user by ID.
+- **Headers:** `Authorization: Bearer <token>`
+- **Success Response (200 OK):**
+```json
+{
+  "message": "Now following user."
+}
+```
+- **Error Response (400 Bad Request):**
+```json
+{
+  "error": "Already following."
+}
+```
+
+### Unfollow User
+**Feature:** Unfollow a User
+- **Method:** POST
+- **Path:** `/api/users/:userId/unfollow`
+- **Description:** Unfollow a user by ID.
+- **Headers:** `Authorization: Bearer <token>`
+- **Success Response (200 OK):**
+```json
+{
+  "message": "Unfollowed user."
+}
+```
+- **Error Response (400 Bad Request):**
+```json
+{
+  "error": "Not following user."
+}
+```
+
+### Get Followers
+**Feature:** Get Followers
+- **Method:** GET
+- **Path:** `/api/users/:userId/followers`
+- **Description:** Get a list of users following the specified user.
+- **Success Response (200 OK):** `[<User>]`
+- **Error Response (404 Not Found):**
+```json
+{
+  "error": "User not found."
+}
+```
+
+### Get Following
+**Feature:** Get Following
+- **Method:** GET
+- **Path:** `/api/users/:userId/following`
+- **Description:** Get a list of users the specified user is following.
+- **Success Response (200 OK):** `[<User>]`
+- **Error Response (404 Not Found):**
+```json
+{
+  "error": "User not found."
+}
+```
+
+### Search Users
+**Feature:** Search Users
+- **Method:** GET
+- **Path:** `/api/users/search?q=keyword`
+- **Description:** Search for users by keyword.
+- **Success Response (200 OK):** `[<User>]`
+- **Error Response (400 Bad Request):**
+```json
+{
+  "error": "Query required."
+}
+```
+
+---
+
+## 5. Post Endpoints
+
+### Create Post
+**Feature:** Create Post
+- **Method:** POST
+- **Path:** `/api/posts`
+- **Description:** Create a new post with optional media.
+- **Headers:** `Authorization: Bearer <token>`
+- **Request Body:**
+```json
+{
+  "caption": "string",
+  "media_urls": ["string"]
+}
+```
+- **Success Response (201 Created):** `<Post>`
+- **Error Response (400 Bad Request):**
+```json
+{
+  "error": "Caption required."
+}
+```
+
+### Get Post by ID
+**Feature:** View Post
+- **Method:** GET
+- **Path:** `/api/posts/:postId`
+- **Description:** Retrieve a single post by ID.
+- **Success Response (200 OK):** `<Post>`
+- **Error Response (404 Not Found):**
+```json
+{
+  "error": "Post not found."
+}
+```
+
+### Delete Post
+**Feature:** Delete Post
+- **Method:** DELETE
+- **Path:** `/api/posts/:postId`
+- **Description:** Delete a post by ID.
+- **Headers:** `Authorization: Bearer <token>`
+- **Success Response (204 No Content):** No content.
+- **Error Response (404 Not Found):**
+```json
+{
+  "error": "Post not found."
+}
+```
+
+### Edit Post
+**Feature:** Edit Post
+- **Method:** PATCH
+- **Path:** `/api/posts/:postId`
+- **Description:** Edit a post's caption.
+- **Headers:** `Authorization: Bearer <token>`
+- **Request Body:**
+```json
+{
+  "caption": "string"
+}
+```
+- **Success Response (200 OK):** `<Post>`
+- **Error Response (400 Bad Request):**
+```json
+{
+  "error": "Invalid input."
+}
+```
+
+### Like Post
+**Feature:** Like a Post
+- **Method:** POST
+- **Path:** `/api/posts/:postId/like`
+- **Description:** Like a specific post.
+- **Headers:** `Authorization: Bearer <token>`
+- **Success Response (200 OK):**
+```json
+{
+  "message": "Post liked."
+}
+```
+- **Error Response (400 Bad Request):**
+```json
+{
+  "error": "Post already liked."
+}
+```
+
+### Unlike Post
+**Feature:** Unlike a Post
+- **Method:** POST
+- **Path:** `/api/posts/:postId/unlike`
+- **Description:** Unlike a specific post.
+- **Headers:** `Authorization: Bearer <token>`
+- **Success Response (200 OK):**
+```json
+{
+  "message": "Post unliked."
+}
+```
+- **Error Response (400 Bad Request):**
+```json
+{
+  "error": "Post not liked."
+}
+```
+
+### Get Post Likes
+**Feature:** Get Post Likes
+- **Method:** GET
+- **Path:** `/api/posts/:postId/likes`
+- **Description:** Get a list of users who liked a post.
+- **Success Response (200 OK):** `[<User>]`
+- **Error Response (404 Not Found):**
+```json
+{
+  "error": "Post not found."
+}
+```
+
+### Add Comment
+**Feature:** Add Comment
+- **Method:** POST
+- **Path:** `/api/posts/:postId/comments`
+- **Description:** Add a comment to a post.
+- **Headers:** `Authorization: Bearer <token>`
+- **Request Body:**
+```json
+{
+  "content": "string"
+}
+```
+- **Success Response (201 Created):** `<Comment>`
+- **Error Response (400 Bad Request):**
+```json
+{
+  "error": "Content required."
+}
+```
+
+### Get Comments
+**Feature:** Get Comments
+- **Method:** GET
+- **Path:** `/api/posts/:postId/comments`
+- **Description:** Get all comments for a post.
+- **Success Response (200 OK):** `[<Comment>]`
+- **Error Response (404 Not Found):**
+```json
+{
+  "error": "Post not found."
+}
+```
+
+### Delete Comment
+**Feature:** Delete Comment
+- **Method:** DELETE
+- **Path:** `/api/comments/:commentId`
+- **Description:** Delete a comment by ID.
+- **Headers:** `Authorization: Bearer <token>`
+- **Success Response (204 No Content):** No content.
+- **Error Response (404 Not Found):**
+```json
+{
+  "error": "Comment not found."
+}
+```
+
+### Edit Comment
+**Feature:** Edit Comment
+- **Method:** PATCH
+- **Path:** `/api/comments/:commentId`
+- **Description:** Edit a comment's content.
+- **Headers:** `Authorization: Bearer <token>`
+- **Request Body:**
+```json
+{
+  "content": "string"
+}
+```
+- **Success Response (200 OK):** `<Comment>`
+- **Error Response (400 Bad Request):**
+```json
+{
+  "error": "Invalid input."
+}
+```
+
+---
+
+## 6. Feed Endpoints
+
+### Home Feed
+**Feature:** Home Feed
+- **Method:** GET
+- **Path:** `/api/feed/home`
+- **Description:** Get posts from followed users for the home feed.
+- **Headers:** `Authorization: Bearer <token>`
+- **Success Response (200 OK):** `[<Post>]`
+- **Error Response (401 Unauthorized):**
+```json
+{
+  "error": "Not authenticated."
+}
+```
+
+### Explore Feed
+**Feature:** Explore Feed
+- **Method:** GET
+- **Path:** `/api/feed/explore`
+- **Description:** Get recommended or trending posts for the explore feed.
+- **Success Response (200 OK):** `[<Post>]`
+
+### User Posts
+**Feature:** User's Posts
+- **Method:** GET
+- **Path:** `/api/users/:userId/posts`
+- **Description:** Get all posts by a specific user.
+- **Success Response (200 OK):** `[<Post>]`
+- **Error Response (404 Not Found):**
+```json
+{
+  "error": "User not found."
+}
+```
+
+---
+
+## 7. Media Upload
+
+### Upload Media
+**Feature:** Media Upload
+- **Method:** POST
+- **Path:** `/api/media/upload`
+- **Description:** Upload an image or video file.
+- **Headers:** `Authorization: Bearer <token>`
+- **Content-Type:** `multipart/form-data`
+- **Request Body:** `file=<image|video>`
+- **Success Response (201 Created):**
+```json
+{
+  "media_url": "string"
+}
+```
+- **Error Response (400 Bad Request):**
+```json
+{
+  "error": "Invalid file type."
+}
+```
+
+---
+
+## 8. Account & Settings
+
+### Change Password
+**Feature:** Change Password
+- **Method:** POST
+- **Path:** `/api/account/change-password`
+- **Description:** Change the current user's password.
+- **Headers:** `Authorization: Bearer <token>`
+- **Request Body:**
+```json
+{
+  "old_password": "string",
+  "new_password": "string"
+}
+```
+- **Success Response (200 OK):**
+```json
+{
+  "message": "Password changed."
+}
+```
+- **Error Response (400 Bad Request):**
+```json
+{
+  "error": "Incorrect old password."
+}
+```
+
+### Delete Account
+**Feature:** Delete Account
+- **Method:** DELETE
+- **Path:** `/api/account`
+- **Description:** Delete the current user's account.
+- **Headers:** `Authorization: Bearer <token>`
+- **Success Response (204 No Content):** No content.
+- **Error Response (401 Unauthorized):**
+```json
+{
+  "error": "Not authenticated."
+}
+```
+
+---
+
+> Expand this contract as new features are added. All endpoints return errors in the form `{ "error": "message" }` with appropriate HTTP status codes.
