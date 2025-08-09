@@ -20,7 +20,7 @@ export const generateInviteCode = async (req, res) => {
       try {
         const invite = await InviteCode.create({
           code,
-          generatedBy: req.userId,
+          generatedBy: req.userId || null,
           intendedFor: intended_for || null
         });
         return res.status(201).json(invite);

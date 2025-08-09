@@ -37,7 +37,7 @@ authRouter.post('/login', checkUser);
 authRouter.post('/logout', auth, (_req, res) => res.status(204).send());
 authRouter.post('/forgot-password', resetPassword);
 
-authRouter.post('/invite-codes', auth, generateInviteCode);
+authRouter.post('/invite-codes', generateInviteCode);
 authRouter.get('/invite-codes', auth, listInviteCodes);
 authRouter.delete('/invite-codes/:code', auth, revokeInviteCode);
 

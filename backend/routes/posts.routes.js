@@ -129,6 +129,60 @@ router.post('/:postId/report', auth, reportPost);
 
 /**
  * @openapi
+ * /api/posts/{postId}/like:
+ *   post:
+ *     summary: Like a post
+ *     tags:
+ *       - Posts
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Post liked
+ *       400:
+ *         description: Post already liked
+ *
+ * /api/posts/{postId}/unlike:
+ *   post:
+ *     summary: Unlike a post
+ *     tags:
+ *       - Posts
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Post unliked
+ *       400:
+ *         description: Post not liked
+ *
+ * /api/posts/{postId}/likes:
+ *   get:
+ *     summary: List users who liked a post
+ *     tags:
+ *       - Posts
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: OK
+ *       404:
+ *         description: Post not found
+ */
+
+/**
+ * @openapi
  * /api/posts/{postId}/comments:
  *   post:
  *     summary: Add a comment to a post

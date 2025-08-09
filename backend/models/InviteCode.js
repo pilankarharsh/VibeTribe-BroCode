@@ -5,7 +5,7 @@ const inviteCodeSchema = new mongoose.Schema(
     code: { type: String, required: true, unique: true },
     isUsed: { type: Boolean, default: false },
     usedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
-    generatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    generatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default:null },
     intendedFor: { type: String, default: null }
   },
   { timestamps: true }
