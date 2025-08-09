@@ -21,9 +21,6 @@ Frontend:
 Backend:
 - **Node.js** + **Express**
 
-Auth:
-- **Clerk**
-
 Database:
 - **PostgreSQL**
 - **MongoDB**
