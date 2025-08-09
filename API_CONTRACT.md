@@ -58,13 +58,14 @@ This document defines the RESTful API contract for VibeTribe application. Regist
   "usedBy": "string | null",
   "generatedBy": "string",
   "intendedFor": "string | null",
-  "created_at": "datetime(iso 8601)",
-  "updated_at": "datetime(iso 8601)"
+  "createdAt": "datetime(iso 8601)",
+  "updatedAt": "datetime(iso 8601)"
 }
 ```
 > Notes:
 > - Invite codes are unique. After successful registration, the code is marked as used and linked to the newly created user via `usedBy`.
 > - `generatedBy` stores who generated the code, and `intendedFor` optionally stores the intended recipient.
+> - Codes are 6 characters long and unique.
 
 ### Post
 ```json
@@ -75,6 +76,7 @@ This document defines the RESTful API contract for VibeTribe application. Regist
   "media_urls": ["string"],
   "like_count": 0,
   "comment_count": 0,
+  "reports_count": 0,
   "created_at": "datetime(iso 8601)",
   "updated_at": "datetime(iso 8601)"
 }
@@ -105,6 +107,16 @@ This document defines the RESTful API contract for VibeTribe application. Regist
 {
   "follower_id": "string",
   "followed_id": "string",
+  "created_at": "datetime(iso 8601)"
+}
+```
+
+### Report
+```json
+{
+  "user_id": "string",
+  "post_id": "string",
+  "reason": "string | null",
   "created_at": "datetime(iso 8601)"
 }
 ```
