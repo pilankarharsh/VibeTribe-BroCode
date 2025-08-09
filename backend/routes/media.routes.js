@@ -30,4 +30,27 @@ router.post('/upload', auth, upload.single('file'), uploadMedia);
 
 export default router;
 
+/**
+ * @openapi
+ * /api/media/upload:
+ *   post:
+ *     summary: Upload media file
+ *     tags: [Media]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       201:
+ *         description: Created
+ *       400:
+ *         description: Invalid file type
+ */
+
 

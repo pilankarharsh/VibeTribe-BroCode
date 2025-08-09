@@ -8,6 +8,8 @@ import commentsRoute from './routes/comments.routes.js'
 import feedRoute from './routes/feed.routes.js'
 import mediaRoute from './routes/media.routes.js'
 import accountRoute from './routes/account.routes.js'
+import swaggerUi from 'swagger-ui-express'
+import swaggerSpec from './config/swagger.js'
 
 const app = express();
 
@@ -25,6 +27,9 @@ app.use('/api/comments', commentsRoute);
 app.use('/api/feed', feedRoute);
 app.use('/api/media', mediaRoute);
 app.use('/api/account', accountRoute);
+
+// API docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // 404 handler
 app.use((req, res, _next) => {

@@ -9,4 +9,25 @@ router.get('/explore', getExploreFeed);
 
 export default router;
 
+/**
+ * @openapi
+ * /api/feed/home:
+ *   get:
+ *     summary: Get home feed (followed users)
+ *     tags: [Feed]
+ *     responses:
+ *       200:
+ *         description: OK
+ *       401:
+ *         description: Not authenticated
+ *
+ * /api/feed/explore:
+ *   get:
+ *     summary: Get explore feed
+ *     tags: [Feed]
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+
 
