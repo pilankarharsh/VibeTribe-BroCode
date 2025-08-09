@@ -5,11 +5,10 @@
 - User registration, login, logout, and password reset
 - User profiles (view, update, search)
 - Follow/unfollow users, view followers/following
-- Create, edit, delete, and view posts (with media)
+- Create, edit, delete, and view posts
 - Like/unlike posts
 - Comment on posts (add, edit, delete, view)
 - Personalized feeds (home, explore, user posts)
-- Media upload (images/videos)
 - Account management (change password, delete account)
 - Verified user badges
 
@@ -20,13 +19,12 @@
 4. User Endpoints
 5. Post Endpoints
 6. Feed Endpoints
-7. Media Upload
-8. Account & Settings
+7. Account & Settings
 
 ---
 
 ## 1. Introduction
-This document defines the RESTful API contract for VibeTribe application. Registration is invite-only: users must have a valid invite code to create an account. The contract covers user management, posts, comments, likes, follows, and media uploads.
+This document defines the RESTful API contract for VibeTribe application. Registration is invite-only: users must have a valid invite code to create an account. The contract covers user management, posts, comments, likes, and follows.
 
 ---
 
@@ -644,32 +642,7 @@ This document defines the RESTful API contract for VibeTribe application. Regist
 
 ---
 
-## 7. Media Upload
-
-### Upload Media
-**Feature:** Media Upload
-- **Method:** POST
-- **Path:** `/api/media/upload`
-- **Description:** Upload an image or video file.
-- **Headers:** `Authorization: Bearer <token>`
-- **Content-Type:** `multipart/form-data`
-- **Request Body:** `file=<image|video>`
-- **Success Response (201 Created):**
-```json
-{
-  "media_url": "string"
-}
-```
-- **Error Response (400 Bad Request):**
-```json
-{
-  "error": "Invalid file type."
-}
-```
-
----
-
-## 8. Account & Settings
+## 7. Account & Settings
 
 ### Change Password
 **Feature:** Change Password
