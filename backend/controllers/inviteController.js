@@ -23,7 +23,7 @@ export const generateInviteCode = async (req, res) => {
           generatedBy: req.userId,
           intendedFor: intendedFor || null,
           isUsed: false,
-          usedBy: null,
+          usedBy: req.userId,
         });
         return res.status(201).json(invite);
       } catch (err) {

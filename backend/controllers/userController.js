@@ -28,9 +28,8 @@ const createUser = async (req, res) => {
         const hashPassword = await bcrypt.hash(password, 10)
         //Save details on Database
         const user = await User.create({ username, email, password: hashPassword });
-        //update invite code status to used
+        // Mark invite code as used (do not change usedBy which stores generator)
         isCodeValid.isUsed = true;
-        isCodeValid.usedBy = user._id;
         await isCodeValid.save();
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "60d" });
 
