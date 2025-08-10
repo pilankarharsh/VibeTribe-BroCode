@@ -53,7 +53,7 @@ This document defines the RESTful API contract for VibeTribe application. Regist
   "_id": "string",
   "code": "string",
   "isUsed": false,
-  "usedBy": "string | null",
+  "usedBy": "string" ,
   "generatedBy": "string | null",
   "intendedFor": "string | null",
   "createdAt": "datetime(iso 8601)",
