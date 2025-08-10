@@ -68,11 +68,11 @@ router.get('/:userId/posts', getUserPosts);
  *           schema:
  *             type: object
  *             properties:
- *               display_name:
+ *               displayName:
  *                 type: string
  *               bio:
  *                 type: string
- *               avatar_url:
+ *               avatarUrl:
  *                 type: string
  *     responses:
  *       200:

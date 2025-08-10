@@ -17,14 +17,14 @@ export const updateUserProfile = async (req, res) => {
     const { userId } = req.params;
     if (req.userId !== userId) return res.status(401).json({ error: 'Not authenticated.' });
 
-    const { display_name, bio, avatar_url } = req.body || {};
-    if (display_name === undefined && bio === undefined && avatar_url === undefined) {
+    const { displayName, bio, avatarUrl } = req.body || {};
+    if (displayName === undefined && bio === undefined && avatarUrl === undefined) {
       return res.status(400).json({ error: 'Invalid input.' });
     }
 
     const user = await User.findByIdAndUpdate(
       userId,
-      { $set: { display_name, bio, avatar_url } },
+      { $set: { displayName, bio, avatarUrl } },
       { new: true, runValidators: true }
     ).select('-password');
     if (!user) return res.status(404).json({ error: 'User not found.' });
@@ -39,12 +39,12 @@ export const followUser = async (req, res) => {
     const targetId = req.params.userId;
     if (req.userId === targetId) return res.status(400).json({ error: 'Invalid input.' });
     try {
-      await Follow.create({ follower_id: req.userId, followed_id: targetId });
+      await Follow.create({ followerId: req.userId, followedId: targetId });
     } catch (e) {
       return res.status(400).json({ error: 'Already following.' });
     }
-    await User.findByIdAndUpdate(targetId, { $inc: { followers_count: 1 } });
-    await User.findByIdAndUpdate(req.userId, { $inc: { following_count: 1 } });
+    await User.findByIdAndUpdate(targetId, { $inc: { followersCount: 1 } });
+    await User.findByIdAndUpdate(req.userId, { $inc: { followingCount: 1 } });
     return res.status(200).json({ message: 'Now following user.' });
   } catch (err) {
     return res.status(500).json({ error: err.message });
@@ -54,10 +54,10 @@ export const followUser = async (req, res) => {
 export const unfollowUser = async (req, res) => {
   try {
     const targetId = req.params.userId;
-    const result = await Follow.findOneAndDelete({ follower_id: req.userId, followed_id: targetId });
+    const result = await Follow.findOneAndDelete({ followerId: req.userId, followedId: targetId });
     if (!result) return res.status(400).json({ error: 'Not following user.' });
-    await User.findByIdAndUpdate(targetId, { $inc: { followers_count: -1 } });
-    await User.findByIdAndUpdate(req.userId, { $inc: { following_count: -1 } });
+    await User.findByIdAndUpdate(targetId, { $inc: { followersCount: -1 } });
+    await User.findByIdAndUpdate(req.userId, { $inc: { followingCount: -1 } });
     return res.status(200).json({ message: 'Unfollowed user.' });
   } catch (err) {
     return res.status(500).json({ error: err.message });
@@ -69,8 +69,8 @@ export const getFollowers = async (req, res) => {
     const { userId } = req.params;
     const exists = await User.exists({ _id: userId });
     if (!exists) return res.status(404).json({ error: 'User not found.' });
-    const followers = await Follow.find({ followed_id: userId }).populate('follower_id', '-password');
-    const users = followers.map(f => f.follower_id);
+    const followers = await Follow.find({ followedId: userId }).populate('followerId', '-password');
+    const users = followers.map(f => f.followerId);
     return res.status(200).json(users);
   } catch (err) {
     return res.status(500).json({ error: err.message });
@@ -82,8 +82,8 @@ export const getFollowing = async (req, res) => {
     const { userId } = req.params;
     const exists = await User.exists({ _id: userId });
     if (!exists) return res.status(404).json({ error: 'User not found.' });
-    const followings = await Follow.find({ follower_id: userId }).populate('followed_id', '-password');
-    const users = followings.map(f => f.followed_id);
+    const followings = await Follow.find({ followerId: userId }).populate('followedId', '-password');
+    const users = followings.map(f => f.followedId);
     return res.status(200).json(users);
   } catch (err) {
     return res.status(500).json({ error: err.message });
@@ -95,7 +95,7 @@ export const searchUsers = async (req, res) => {
   if (!q) return res.status(400).json({ error: 'Query required.' });
   try {
     const regex = new RegExp(q, 'i');
-    const users = await User.find({ $or: [{ username: regex }, { display_name: regex }] }).select('-password');
+    const users = await User.find({ $or: [{ username: regex }, { displayName: regex }] }).select('-password');
     return res.status(200).json(users);
   } catch (err) {
     return res.status(500).json({ error: err.message });
@@ -118,7 +118,7 @@ export const getUserPosts = async (req, res) => {
     const { userId } = req.params;
     const exists = await User.exists({ _id: userId });
     if (!exists) return res.status(404).json({ error: 'User not found.' });
-    const posts = await Post.find({ author_id: userId }).sort({ created_at: -1 });
+    const posts = await Post.find({ authorId: userId }).sort({ createdAt: -1 });
     return res.status(200).json(posts);
   } catch (err) {
     return res.status(500).json({ error: err.message });

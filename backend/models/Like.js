@@ -2,13 +2,13 @@ import mongoose from 'mongoose';
 
 const likeSchema = new mongoose.Schema(
   {
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    post_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true }
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    postId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true }
   },
-  { timestamps: { createdAt: 'created_at', updatedAt: false } }
+  { timestamps: { createdAt: true, updatedAt: false } }
 );
 
-likeSchema.index({ user_id: 1, post_id: 1 }, { unique: true });
+likeSchema.index({ userId: 1, postId: 1 }, { unique: true });
 
 export default mongoose.model('Like', likeSchema);
 

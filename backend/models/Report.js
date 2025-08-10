@@ -2,14 +2,14 @@ import mongoose from 'mongoose';
 
 const reportSchema = new mongoose.Schema(
   {
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    post_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
-    reason: { type: String, default: null }
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    postId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
+    reason: { type: String, required: true }
   },
-  { timestamps: { createdAt: 'created_at', updatedAt: false } }
+  { timestamps: { createdAt: true, updatedAt: false } }
 );
 
-reportSchema.index({ user_id: 1, post_id: 1 }, { unique: true });
+reportSchema.index({ userId: 1, postId: 1 }, { unique: true });
 
 export default mongoose.model('Report', reportSchema);
 

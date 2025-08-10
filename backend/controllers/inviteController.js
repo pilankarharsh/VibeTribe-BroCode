@@ -12,7 +12,7 @@ function generateShortCode(length = 6) {
 }
 
 export const generateInviteCode = async (req, res) => {
-  const { intended_for } = req.body || {};
+  const { intendedFor } = req.body || {};
   try {
     let attempts = 0;
     while (attempts < 5) {
@@ -20,8 +20,10 @@ export const generateInviteCode = async (req, res) => {
       try {
         const invite = await InviteCode.create({
           code,
-          generatedBy: req.userId || null,
-          intendedFor: intended_for || null
+          generatedBy: req.userId,
+          intendedFor: intendedFor || null,
+          isUsed: false,
+          usedBy: null,
         });
         return res.status(201).json(invite);
       } catch (err) {
@@ -42,7 +44,7 @@ export const generateInviteCode = async (req, res) => {
 
 export const listInviteCodes = async (req, res) => {
   try {
-    const invites = await InviteCode.find({ generatedBy: req.userId }).sort({ created_at: -1 });
+    const invites = await InviteCode.find({ generatedBy: req.userId }).sort({ createdAt: -1 });
     return res.status(200).json(invites);
   } catch (err) {
     return res.status(500).json({ error: err.message });

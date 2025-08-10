@@ -43,7 +43,7 @@ router.post('/:postId/report', auth, reportPost);
  *             properties:
  *               caption:
  *                 type: string
- *               media_urls:
+ *               mediaUrls:
  *                 type: array
  *                 items:
  *                   type: string
@@ -115,6 +115,7 @@ router.post('/:postId/report', auth, reportPost);
  *         schema:
  *           type: string
  *     requestBody:
+ *       required: true
  *       content:
  *         application/json:
  *           schema:

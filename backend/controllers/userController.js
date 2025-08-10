@@ -5,12 +5,12 @@ import jwt from "jsonwebtoken";
 
 const createUser = async (req, res) => {
     try{
-        const {username, email, password, invite_code} = req.body;
-        if (!username || !email || !password || !invite_code) {
+        const {username, email, password, inviteCode} = req.body;
+        if (!username || !email || !password || !inviteCode) {
             return res.status(400).json({ error: 'Invalid credentials' });
         }
         //Check if invite code is valid
-        const isCodeValid = await InviteCode.findOne({code: invite_code, isUsed: false});
+        const isCodeValid = await InviteCode.findOne({code: inviteCode, isUsed: false});
         if(!isCodeValid)
             return res.status(401).json({ error: "Invalid or missing invite code." });
         //Check if email already exist
@@ -28,7 +28,7 @@ const createUser = async (req, res) => {
         const hashPassword = await bcrypt.hash(password, 10)
         //Save details on Database
         const user = await User.create({ username, email, password: hashPassword });
-        //update invite code status to used        
+        //update invite code status to used
         isCodeValid.isUsed = true;
         isCodeValid.usedBy = user._id;
         await isCodeValid.save();
@@ -44,7 +44,7 @@ const checkUser = async (req, res) =>{
     const {identifier, password} = req.body;
 
     if(!identifier|| !password){
-        return res.status(401).json({message: 'Invalid credentials'});
+        return res.status(401).json({ error: 'Invalid credentials.' });
     }
 
     try{
