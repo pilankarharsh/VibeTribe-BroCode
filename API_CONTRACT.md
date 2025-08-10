@@ -33,28 +33,28 @@ This document defines the RESTful API contract for VibeTribe application. Regist
 ### User
 ```json
 {
-  "id": "string",
+  "_id": "string",
   "username": "string",
-  "display_name": "string",
+  "displayName": "string",
   "email": "string",
-  "avatar_url": "string",
+  "avatarUrl": "string",
   "bio": "string",
   "verified": false,
-  "followers_count": 0,
-  "following_count": 0,
-  "created_at": "datetime(iso 8601)",
-  "updated_at": "datetime(iso 8601)"
+  "followersCount": 0,
+  "followingCount": 0,
+  "createdAt": "datetime(iso 8601)",
+  "updatedAt": "datetime(iso 8601)"
 }
 ```
 
 ### InviteCode
 ```json
 {
-  "id": "string",
+  "_id": "string",
   "code": "string",
   "isUsed": false,
   "usedBy": "string | null",
-  "generatedBy": "string",
+  "generatedBy": "string | null",
   "intendedFor": "string | null",
   "createdAt": "datetime(iso 8601)",
   "updatedAt": "datetime(iso 8601)"
@@ -69,14 +69,14 @@ This document defines the RESTful API contract for VibeTribe application. Regist
 ```json
 {
   "id": "string",
-  "author_id": "string",
+  "authorId": "string",
   "caption": "string",
-  "media_urls": ["string"],
-  "like_count": 0,
-  "comment_count": 0,
-  "reports_count": 0,
-  "created_at": "datetime(iso 8601)",
-  "updated_at": "datetime(iso 8601)"
+  "mediaUrls": ["string"],
+  "likeCount": 0,
+  "commentCount": 0,
+  "reportsCount": 0,
+  "createdAt": "datetime(iso 8601)",
+  "updatedAt": "datetime(iso 8601)"
 }
 ```
 
@@ -84,38 +84,38 @@ This document defines the RESTful API contract for VibeTribe application. Regist
 ```json
 {
   "id": "string",
-  "post_id": "string",
-  "author_id": "string",
+  "postId": "string",
+  "authorId": "string",
   "content": "string",
-  "created_at": "datetime(iso 8601)"
+  "createdAt": "datetime(iso 8601)"
 }
 ```
 
 ### Like
 ```json
 {
-  "user_id": "string",
-  "post_id": "string",
-  "created_at": "datetime(iso 8601)"
+  "userId": "string",
+  "postId": "string",
+  "createdAt": "datetime(iso 8601)"
 }
 ```
 
 ### Follow
 ```json
 {
-  "follower_id": "string",
-  "followed_id": "string",
-  "created_at": "datetime(iso 8601)"
+  "followerId": "string",
+  "followedId": "string",
+  "createdAt": "datetime(iso 8601)"
 }
 ```
 
 ### Report
 ```json
 {
-  "user_id": "string",
-  "post_id": "string",
-  "reason": "string | null",
-  "created_at": "datetime(iso 8601)"
+  "userId": "string",
+  "postId": "string",
+  "reason": "string",
+  "createdAt": "datetime(iso 8601)"
 }
 ```
 
@@ -134,7 +134,7 @@ This document defines the RESTful API contract for VibeTribe application. Regist
   "username": "string",
   "email": "string",
   "password": "string",
-  "invite_code": "string"
+  "inviteCode": "string"
 }
 ```
 - **Success Response (201 Created):**
@@ -159,13 +159,13 @@ This document defines the RESTful API contract for VibeTribe application. Regist
 ### Generate Invite Code
 **Feature:** Create invite codes
 - **Method:** POST
-- **Path:** `/api/auth/invite-codes`
+- **Path:** `/api/auth/invite-code`
 - **Description:** Generate a new invite code. Only authenticated users can generate codes.
 - **Headers:** `Authorization: Bearer <token>`
 - **Request Body:**
 ```json
 {
-  "intended_for": "string (optional)"
+  "intendedFor": "string",
 }
 ```
 - **Success Response (201 Created):** `<InviteCode>`
@@ -205,8 +205,7 @@ This document defines the RESTful API contract for VibeTribe application. Regist
 - **Request Body:**
 ```json
 {
-  "email": "string (optional)",
-  "username": "string (optional)",
+  "identifier": "string",
   "password": "string"
 }
 ```
@@ -288,9 +287,9 @@ This document defines the RESTful API contract for VibeTribe application. Regist
 - **Request Body:**
 ```json
 {
-  "display_name": "string",
+  "displayName": "string",
   "bio": "string",
-  "avatar_url": "string"
+  "avatarUrl": "string"
 }
 ```
 - **Success Response (200 OK):** `<User>`
@@ -408,7 +407,7 @@ This document defines the RESTful API contract for VibeTribe application. Regist
 ```json
 {
   "caption": "string",
-  "media_urls": ["string"]
+  "mediaUrls": ["string"]
 }
 ```
 - **Success Response (201 Created):** `<Post>`
@@ -425,7 +424,7 @@ This document defines the RESTful API contract for VibeTribe application. Regist
 - **Path:** `/api/posts/:postId/report`
 - **Description:** Report a specific post. Multiple reports push the post down in feeds.
 - **Headers:** `Authorization: Bearer <token>`
-- **Request Body (optional):**
+- **Request Body:**
 ```json
 { "reason": "string" }
 ```
@@ -436,6 +435,10 @@ This document defines the RESTful API contract for VibeTribe application. Regist
 - **Error Response (400 Bad Request):**
 ```json
 { "error": "Post already reported." }
+```
+- **Error Response (400 Bad Request):**
+```json
+{ "error": "Reason required." }
 ```
 ### Get Post by ID
 **Feature:** View Post
@@ -653,8 +656,8 @@ This document defines the RESTful API contract for VibeTribe application. Regist
 - **Request Body:**
 ```json
 {
-  "old_password": "string",
-  "new_password": "string"
+  "oldPassword": "string",
+  "newPassword": "string"
 }
 ```
 - **Success Response (200 OK):**
