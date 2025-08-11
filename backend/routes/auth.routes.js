@@ -99,9 +99,9 @@ export default authRouter;
  *                 type: string
  *     responses:
  *       200:
- *         description: Reset link sent
+ *         description: Reset link sent!
  *       404:
- *         description: Email not found
+ *         description: Email not found!
  */
 
 /**
