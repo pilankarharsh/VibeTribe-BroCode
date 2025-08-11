@@ -388,6 +388,20 @@ This document defines the RESTful API contract for VibeTribe application. Regist
   "exists": true
 }
 ```
+### Check Email Availability
+**Feature:** Check if email exists
+- **Method:** GET
+- **Path:** `/api/users/check-email?email=user@example.com`
+- **Description:** Returns whether an email is already in use.
+- **Success Response (200 OK):**
+```json
+{ "exists": true }
+```
+- **Error Response (400 Bad Request):**
+```json
+{ "error": "Invalid input." }
+```
+
 - **Error Response (400 Bad Request):**
 ```json
 { "error": "Invalid input." }
