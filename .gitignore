@@ -1,6 +1,8 @@
 # Node modules
 node_modules/
+#production
 backend-production/
+frontend-production/
 # Logs
 logs/
 *.log
