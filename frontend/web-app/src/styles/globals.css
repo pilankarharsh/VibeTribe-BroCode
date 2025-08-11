@@ -1,0 +1,237 @@
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color: var(--bg-default);
+  color: var(--text-default);
+  font-family: var(--font-sans);
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--brand-primary);
+}
+
+/* -------------------------
+   Scrollbar Styling (Webkit)
+-------------------------- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-muted-text);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-primary);
+}
+
+/* -------------------------
+   Typography Classes
+-------------------------- */
+.h1 { font-weight: var(--fw-bold); font-size: var(--fs-headline-44); line-height: var(--lh-headline-44); }
+.h2 { font-weight: var(--fw-demi); font-size: var(--fs-headline-28); line-height: var(--lh-headline-28); }
+.h3 { font-weight: var(--fw-demi); font-size: var(--fs-headline-22); line-height: var(--lh-headline-22); }
+.lead { font-weight: var(--fw-regular); font-size: var(--fs-body-18); line-height: var(--lh-body-18); }
+.body { font-weight: var(--fw-regular); font-size: var(--fs-body-15); line-height: var(--lh-body-15); }
+.caption { font-weight: var(--fw-demi); font-size: var(--fs-cap-12); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* -------------------------
+   Form Elements
+-------------------------- */
+input, textarea, select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: var(--fs-body-15);
+  border: 1px solid var(--color-soft-grey);
+  border-radius: var(--btn-radius);
+  background-color: var(--bg-elevated);
+  color: var(--text-default);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--brand-primary);
+  box-shadow: var(--focus-ring);
+}
+
+::placeholder {
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+/* -------------------------
+   Buttons
+-------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: .75rem 1.2rem;
+  font-family: var(--font-sans);
+  font-size: var(--fs-body-15);
+  font-weight: var(--fw-demi);
+  border-radius: var(--btn-radius);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+  border: none;
+}
+.btn-primary {
+  background-color: var(--brand-primary);
+  color: var(--color-white);
+}
+.btn-primary:disabled {
+  background-color: #7d5cff40;
+  color: var(--color-white);
+}
+.btn-secondary {
+  background-color: var(--surface);
+  color: var(--text-default);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* -------------------------
+   Cards
+-------------------------- */
+.card {
+  background-color: var(--bg-elevated);
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow-soft);
+  padding: 1.5rem;
+}
+
+/* -------------------------
+   Layout Helpers
+-------------------------- */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* -------------------------
+   Focus & Accessibility
+-------------------------- */
+[type="button"]:focus,
+button:focus,
+a:focus {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* -------------------------
+   Animations
+-------------------------- */
+.fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* -------------------------
+   Responsive header tweaks
+-------------------------- */
+@media (max-width: 728px) {
+  .header-cta {
+    display: none !important;
+  }
+
+  .header-logo {
+    width: 100vw !important;
+    justify-content: center;
+  }
+}
+
+/* -------------------------
+   Font faces (public/fonts)
+-------------------------- */
+@font-face {
+  font-family: "Avalon";
+  src: url("/fonts/Avalon-Book.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Avalon";
+  src: url("/fonts/Avalon-Demi.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Avalon";
+  src: url("/fonts/Avalon-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Quincy CF";
+  src: url("/fonts/Quincy-CF.ttf") format("truetype");
+  font-style: normal;
+  font-display: swap;
+}
+.auth-input-lable{
+  color:var(--color-muted-text);
+  text-transform:none;
+  font-weight:var(--fw-bold);
+}
+.auth-input{
+  border: none;
+  margin: 0 auto;
+  height:48px;
+  background:var(--color-soft-grey) ;
+  border-radius:var(--input-radius);
+}
+

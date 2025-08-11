@@ -1,0 +1,111 @@
+:root {
+    /* ---------------------- */
+    /* Brand / Core Colors    */
+    /* ---------------------- */
+    --color-electric-pink: #ff2d95;   /* Electric Pink */
+    --color-lavender-purple: #7c5cff; /* Lavender Purple */
+    --color-sun-yellow: #ffd400;      /* Sun Yellow */
+    --color-success-green: #2ecc71;   /* Success */
+    --color-warning-orange: #ff9f1a;  /* Warning */
+    --color-error-red: #e02424;       /* Error */
+    --color-info-blue: #2b8cff;       /* Info */
+  
+    /* Neutral / UI */
+    --color-black: #0b0b0b;
+    --color-white: #fff;
+    --color-hard-grey: #f0f1f2;        /* background / surface */
+    --color-soft-grey: #f1f1f1;        /* background / surface */
+    --color-muted-text: #8A8A8A;      /* gray for secondary text */
+  
+    /* Semantic aliases */
+    --brand-primary: var(--color-lavender-purple);
+    --brand-accent: var(--color-electric-pink);
+    --brand-cta: var(--color-sun-yellow);
+  
+    --bg-default: var(--color-white);
+    --bg-elevated: #ffffff;
+    --text-default: var(--color-black);
+    --text-muted: var(--color-muted-text);
+    --surface: var(--color-soft-grey);
+  
+    /* ---------------------- */
+    /* Dark mode overrides   */
+    /* (toggle these in a .dark class or data-theme="dark") */
+    /* ---------------------- */
+  }
+  
+  [data-theme="dark"] {
+    --bg-default: #0b0b0d;
+    --bg-elevated: #111114;
+    --text-default: #f7f7f8;
+    --text-muted: #9aa0a6;
+    --surface: #0f1113;
+  }
+  
+  /* ---------------------- */
+  /* Typography tokens      */
+  /* ---------------------- */
+  /* Primary display font: Avalon Quincy CF (headline family)
+     Secondary serif (as fallback / body serif) */
+  :root {
+    --font-sans: "Avalon", Inter, system-ui, -apple-system, "Segoe UI",
+      Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji",
+      "Segoe UI Symbol";
+    --font-serif: "Quincy CF","Georgia", "Times New Roman", serif;
+  
+    /* Font weights (use naming from typography guide) */
+    --fw-regular: 400;
+    --fw-demi: 600;
+    --fw-bold: 700;
+  }
+  
+  /* Headline sizes (based on your typography doc) */
+  /* Headline bold 44, demi 44, bold 22, demi 22, bold 16, demi 16, cap sizes */
+  :root {
+    --fs-headline-44: 44px;
+    --lh-headline-44: 1.05;
+  
+    --fs-headline-28: 28px;
+    --lh-headline-28: 1.1;
+  
+    --fs-headline-22: 22px;
+    --lh-headline-22: 1.15;
+  
+    --fs-headline-16: 16px;
+    --lh-headline-16: 1.25;
+  
+    /* Caps / small labels */
+    --fs-cap-12: 12px;
+    --fs-cap-10: 10px;
+  
+    /* Body sizes */
+    --fs-body-18: 18px;
+    --lh-body-18: 1.5;
+  
+    --fs-body-15: 15px;
+    --lh-body-15: 1.5;
+  
+    --fs-body-12: 12px;
+    --lh-body-12: 1.4;
+  }  
+  /* ---------------------- */
+  /* Example component tokens */
+  /* ---------------------- */
+  :root {
+    --input-radius: 12px;
+    --btn-radius: 100px;
+    --card-radius: 16px;
+    --shadow-soft: 0 6px 18px rgba(16,24,40,0.06);
+  }
+  
+  /* ---------------------- */
+  /* Accessibility helpers */
+  /* ---------------------- */
+  :root {
+    --focus-ring: 3px solid rgba(61, 61, 61, 0.18);
+  }
+  
+  /* ---------------------- */
+  /* End of variables.css   */
+  /* ---------------------- */
+  
