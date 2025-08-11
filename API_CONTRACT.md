@@ -1,7 +1,7 @@
 # 📱 VibeTribe Back-end API Contract
 
 ## Core Features
-- Invite-only registration (users must have a valid invite code to register)
+- Invite-only registration (users must have a valid invite code to register else add to wistlist)
 - User registration, login, logout, and password reset
 - User profiles (view, update, search)
 - Follow/unfollow users, view followers/following
