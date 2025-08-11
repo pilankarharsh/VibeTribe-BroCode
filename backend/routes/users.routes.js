@@ -9,13 +9,17 @@ import {
   getFollowing,
   searchUsers,
   getUserPosts,
-  checkUsernameExists
+  checkUsernameExists,
+  checkEmailExists
 } from '../controllers/profileController.js';
 
 const router = express.Router();
 
 router.get('/search', searchUsers);
 router.get('/check-username', checkUsernameExists);
+router.get('/check-email', checkEmailExists);
+// Add to waitlist on email checkpoint during registration flow
+// This endpoint is optional if handled in frontend + register; keeping explicit for clarity would require another controller.
 router.get('/:userId', getUserProfile);
 router.patch('/:userId', auth, updateUserProfile);
 router.post('/:userId/follow', auth, followUser);
@@ -34,6 +38,24 @@ router.get('/:userId/posts', getUserPosts);
  *     parameters:
  *       - in: query
  *         name: username
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+
+/**
+ * @openapi
+ * /api/users/check-email:
+ *   get:
+ *     summary: Check email availability
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: query
+ *         name: email
  *         required: true
  *         schema:
  *           type: string

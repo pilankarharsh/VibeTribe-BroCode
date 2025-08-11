@@ -113,6 +113,17 @@ export const checkUsernameExists = async (req, res) => {
   }
 };
 
+export const checkEmailExists = async (req, res) => {
+  const email = (req.query.email || '').toString().trim();
+  if (!email) return res.status(400).json({ error: 'Invalid input.' });
+  try {
+    const exists = await User.exists({ email });
+    return res.status(200).json({ exists: Boolean(exists) });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
 export const getUserPosts = async (req, res) => {
   try {
     const { userId } = req.params;
