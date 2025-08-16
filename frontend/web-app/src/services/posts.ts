@@ -49,8 +49,8 @@ export async function isPostLikedByUser(postId: string, currentUserId?: string):
       likingUsers.some((user: { _id: string }) => user._id === currentUserId);
     
     return { isLiked };
-  } catch (error) {
-    console.error('Failed to check like status:', error);
+  } catch (likeCheckError) {
+    console.error('Failed to check like status:', likeCheckError);
     return { isLiked: false };
   }
 }

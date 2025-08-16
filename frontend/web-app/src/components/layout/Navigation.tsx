@@ -3,6 +3,7 @@
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
 import { useState } from 'react';
+import Image from 'next/image';
 
 interface NavigationProps {
   className?: string;
@@ -27,7 +28,13 @@ export default function Navigation({ className }: NavigationProps) {
       <div className="nav-content">
         {/* Logo */}
         <div className="nav-brand flex-center">
-          <img src="/nav-logo.svg" style={{width:"50px"}}alt="" />
+          <Image 
+            src="/nav-logo.svg" 
+            alt="VibeTribe Logo" 
+            width={50} 
+            height={50}
+            priority
+          />
           <h2 className="h2">VibeTribe</h2>
         </div>
 
@@ -39,7 +46,13 @@ export default function Navigation({ className }: NavigationProps) {
                 className={`nav-item ${pathname === item.href ? 'active' : ''}`}
                 onClick={() => router.push(item.href)}
               >
-                <img src={item.icon} alt="" className="nav-icon" />
+                <Image 
+                  src={item.icon} 
+                  alt={`${item.label} icon`} 
+                  width={20} 
+                  height={20}
+                  className="nav-icon" 
+                />
                 <span className="nav-label">{item.label}</span>
               </button>
             </li>
@@ -53,9 +66,11 @@ export default function Navigation({ className }: NavigationProps) {
             onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
           >
             {user?.avatarUrl ? (
-              <img
+              <Image
                 src={user.avatarUrl}
                 alt="Profile"
+                width={40}
+                height={40}
                 className="profile-avatar"
               />
             ) : (
@@ -71,7 +86,6 @@ export default function Navigation({ className }: NavigationProps) {
                 router.push('/profile');
                 setIsProfileMenuOpen(false);
               }}>
-
                 Profile
               </button>
               <hr />
@@ -142,13 +156,7 @@ export default function Navigation({ className }: NavigationProps) {
           color: white;
         }
 
-        .nav-icon {
-          width: 20px;
-          height: 20px;
-          filter: var(--icon-filter);
-        }
-
-        .nav-item.active .nav-icon {
+        .nav-item.active :global(.nav-icon) {
           filter: brightness(0) invert(1);
         }
 
@@ -169,9 +177,7 @@ export default function Navigation({ className }: NavigationProps) {
           padding: 2px;
         }
 
-        .profile-avatar {
-          width: 40px;
-          height: 40px;
+        :global(.profile-avatar) {
           border-radius: 50%;
           object-fit: cover;
         }

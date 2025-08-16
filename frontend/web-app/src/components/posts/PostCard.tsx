@@ -6,6 +6,7 @@ import { likePost, unlikePost, addComment, getComments, isPostLikedByUser } from
 import { getUser } from '@/services/user';
 import { useAuthStore } from '@/stores/authStore';
 import { formatDistanceToNow } from '@/lib/utils';
+import Image from 'next/image';
 
 interface PostCardProps {
   post: Post;
@@ -40,14 +41,7 @@ export default function PostCard({ post }: PostCardProps) {
     }
   }, [post.authorId]);
 
-  useEffect(() => {
-    loadAuthor();
-    if (user) {
-      checkLikeStatus();
-    }
-  }, [loadAuthor, post._id, user]); // Include user as dependency
-
-  const checkLikeStatus = async () => {
+  const checkLikeStatus = useCallback(async () => {
     try {
       const { isLiked: liked } = await isPostLikedByUser(post._id, user?._id);
       setIsLiked(liked);
@@ -56,7 +50,14 @@ export default function PostCard({ post }: PostCardProps) {
       // If API fails, assume not liked
       setIsLiked(false);
     }
-  };
+  }, [post._id, user?._id]);
+
+  useEffect(() => {
+    loadAuthor();
+    if (user) {
+      checkLikeStatus();
+    }
+  }, [loadAuthor, checkLikeStatus, user]);
 
   const loadComments = async () => {
     if (isLoadingComments) return;
@@ -121,9 +122,11 @@ export default function PostCard({ post }: PostCardProps) {
       <header className="post-header">
         <div className="author-info">
           {author?.avatarUrl ? (
-            <img
+            <Image
               src={author.avatarUrl}
               alt={`${author.username}'s avatar`}
+              width={40}
+              height={40}
               className="author-avatar"
             />
           ) : (
@@ -149,11 +152,14 @@ export default function PostCard({ post }: PostCardProps) {
         {post.mediaUrls && post.mediaUrls.length > 0 && (
           <div className="post-media">
             {post.mediaUrls.map((url, index) => (
-              <img
+              <Image
                 key={index}
                 src={url}
                 alt={`Post media ${index + 1}`}
+                width={500}
+                height={400}
                 className="post-image"
+                style={{ objectFit: 'cover' }}
               />
             ))}
           </div>
@@ -234,9 +240,7 @@ export default function PostCard({ post }: PostCardProps) {
           gap: 12px;
         }
 
-        .author-avatar {
-          width: 40px;
-          height: 40px;
+        :global(.author-avatar) {
           border-radius: 50%;
           object-fit: cover;
         }
@@ -291,10 +295,9 @@ export default function PostCard({ post }: PostCardProps) {
           margin-bottom: 16px;
         }
 
-        .post-image {
+        :global(.post-image) {
           width: 100%;
           max-height: 400px;
-          object-fit: cover;
           border-radius: 8px;
         }
 

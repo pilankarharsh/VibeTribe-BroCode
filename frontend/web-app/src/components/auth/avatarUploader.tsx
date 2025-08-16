@@ -19,7 +19,7 @@ function getCroppedImg(imageSrc: string, pixelCrop: PixelCrop): Promise<File> {
       const ctx = canvas.getContext("2d");
 
       if (!ctx) {
-        reject("Failed to get canvas context");
+        reject(new Error("Failed to get canvas context"));
         return;
       }
 
@@ -37,14 +37,14 @@ function getCroppedImg(imageSrc: string, pixelCrop: PixelCrop): Promise<File> {
 
       canvas.toBlob((blob) => {
         if (!blob) {
-          reject("Canvas is empty");
+          reject(new Error("Canvas is empty"));
           return;
         }
         const file = new File([blob], "cropped-image.jpg", { type: blob.type });
         resolve(file);
       }, "image/jpeg");
     };
-    image.onerror = reject;
+    image.onerror = (error) => reject(error);
   });
 }
 
@@ -95,9 +95,10 @@ export default function AvatarUploader({
       onFileSelect(croppedFile);
       setIsCropping(false);
       onCroppingStateChange?.(false);
-    } catch (err) {
-      console.error("❌ Cropping failed", err);
-      onError?.("Failed to crop image");
+    } catch (error) {
+      console.error("❌ Cropping failed", error);
+      const errorMessage = error instanceof Error ? error.message : "Failed to crop image";
+      onError?.(errorMessage);
       setIsCropping(false);
       onCroppingStateChange?.(false);
     }

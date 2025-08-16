@@ -1,5 +1,5 @@
 import imageCompression from "browser-image-compression";
-import { supabase } from "./supabase";
+import { getSupabaseClient } from "./supabase";
 
 export async function processAndUploadAvatar(
   file: File,
@@ -8,6 +8,9 @@ export async function processAndUploadAvatar(
   console.log("🖼 Starting processAndUploadAvatar for:", userId);
 
   try {
+    // Get Supabase client (will throw error if not on client side)
+    const supabase = getSupabaseClient();
+
     // Step 1: Compress & resize
     const preferredType = "image/avif";
     const fallbackType = "image/webp";

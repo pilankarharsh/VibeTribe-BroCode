@@ -26,11 +26,21 @@ export async function updateProfile(data: UpdateProfileRequest, userId: string) 
         
         return res.data;
     } catch (error: unknown) {
-        const axiosError = error as { 
-            message?: string; 
-            response?: { data?: unknown; status?: number }; 
-            config?: { url?: string; method?: string; headers?: unknown } 
-        };
+        // Properly type the axios error structure
+        interface AxiosError {
+            message?: string;
+            response?: {
+                data?: unknown;
+                status?: number;
+            };
+            config?: {
+                url?: string;
+                method?: string;
+                headers?: unknown;
+            };
+        }
+        
+        const axiosError = error as AxiosError;
         console.error('❌ API updateProfile failed:', {
             message: error instanceof Error ? error.message : 'Unknown error',
             response: axiosError?.response?.data,

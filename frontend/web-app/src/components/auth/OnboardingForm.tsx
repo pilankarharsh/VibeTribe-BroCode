@@ -1,3 +1,4 @@
+// OnboardingForm.tsx - Fixed version
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
@@ -6,6 +7,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { updateProfile } from "@/services/user";
 import AvatarUploader from "./avatarUploader";
 import { processAndUploadAvatar } from "@/lib/uploads";
+import Image from 'next/image';
 
 type Step = 1 | 2 | 3;
 
@@ -119,6 +121,7 @@ export default function OnboardForm() {
     },
     [avatarFile, user?._id, userIdFromToken]
   );
+
   const finish = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
@@ -217,12 +220,12 @@ export default function OnboardForm() {
             </label>
             {avatarUrl ? (
               <div style={{ textAlign: "center", margin: "1rem 0" }}>
-                <img
+                <Image
                   src={avatarUrl}
                   alt="Profile"
+                  width={100}
+                  height={100}
                   style={{
-                    width: 100,
-                    height: 100,
                     borderRadius: "50%",
                     objectFit: "cover",
                     border: "2px solid var(--color-border)"
