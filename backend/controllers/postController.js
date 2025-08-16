@@ -86,6 +86,15 @@ export const getPostLikes = async (req, res) => {
   }
 };
 
+export const isPostLikedByUser = async (req, res) => {
+  try {
+    const like = await Like.findOne({ userId: req.userId, postId: req.params.postId });
+    return res.status(200).json({ isLiked: !!like });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
 export const addComment = async (req, res) => {
   const { content } = req.body || {};
   if (!content) return res.status(400).json({ error: 'Content required.' });
