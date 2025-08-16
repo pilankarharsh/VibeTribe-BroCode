@@ -66,7 +66,7 @@ export default function Navigation({ className }: NavigationProps) {
             onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
           >
             {user?.avatarUrl ? (
-              <Image
+              <img
                 src={user.avatarUrl}
                 alt="Profile"
                 width={40}

@@ -7,7 +7,6 @@ import { useAuthStore } from "@/stores/authStore";
 import { updateProfile } from "@/services/user";
 import AvatarUploader from "./avatarUploader";
 import { processAndUploadAvatar } from "@/lib/uploads";
-import Image from 'next/image';
 
 type Step = 1 | 2 | 3;
 
@@ -218,21 +217,6 @@ export default function OnboardForm() {
             <label className="auth-input-lable">
               Profile Picture (Optional)
             </label>
-            {avatarUrl ? (
-              <div style={{ textAlign: "center", margin: "1rem 0" }}>
-                <Image
-                  src={avatarUrl}
-                  alt="Profile"
-                  width={100}
-                  height={100}
-                  style={{
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                    border: "2px solid var(--color-border)"
-                  }}
-                />
-              </div>
-            ) : (
               <AvatarUploader
                 userId={user?._id || userIdFromToken || "temp-user"}
                 onFileSelect={(file) => {
@@ -243,7 +227,6 @@ export default function OnboardForm() {
                 onError={(msg) => setError(msg)}
                 onCroppingStateChange={setIsCropping}
               />
-            )}
             {error && <p className="auth-error">{error}</p>}
             {!isCropping && (
               <>

@@ -1,5 +1,5 @@
 import imageCompression from "browser-image-compression";
-import { getSupabaseClient } from "./supabase";
+import { supabase } from "./supabase"; 
 
 export async function processAndUploadAvatar(
   file: File,
@@ -8,9 +8,6 @@ export async function processAndUploadAvatar(
   console.log("🖼 Starting processAndUploadAvatar for:", userId);
 
   try {
-    // Get Supabase client (will throw error if not on client side)
-    const supabase = getSupabaseClient();
-
     // Step 1: Compress & resize
     const preferredType = "image/avif";
     const fallbackType = "image/webp";
@@ -27,7 +24,7 @@ export async function processAndUploadAvatar(
       console.log("✅ Compressed to AVIF:", compressedFile.size, "bytes");
     } catch (err) {
       console.warn("⚠️ AVIF compression failed, falling back to WebP:", err);
-      compressedFile = await imageCompression(file, {
+        compressedFile = await imageCompression(file, {
         maxSizeMB: 1,
         maxWidthOrHeight: 200,
         fileType: fallbackType,

@@ -1,3 +1,4 @@
+import InteractiveHeroSection from "@/components/InteractiveHeroSection";
 import type { ReactNode } from "react";
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
@@ -60,7 +61,8 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         <div className="hero-section" style={{
           flex: "0 0 50%",
           position: "relative",
-          minHeight: "100vh",
+          minHeight: "80vh",
+          margin:"40px 0",
           display: "flex",
           borderRadius: "100px",
           flexDirection: "column",
@@ -69,19 +71,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           overflow: "hidden",
         }}>
           {/* Background Pattern/Image */}
-          <div style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            margin: "40px",
-            borderRadius: "100px",
-            backgroundImage: "url(/images/hero-banner.avif)",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-          }}></div>
+          <InteractiveHeroSection></InteractiveHeroSection>
         </div>
         <div className="body mobile" style={{ display: "none", color: "var(--color-muted-text)", flexDirection: "column", margin: "20px auto" }}>
         <span>Born in Goa ⛱️</span>

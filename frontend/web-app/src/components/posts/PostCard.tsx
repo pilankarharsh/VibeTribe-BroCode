@@ -6,7 +6,6 @@ import { likePost, unlikePost, addComment, getComments, isPostLikedByUser } from
 import { getUser } from '@/services/user';
 import { useAuthStore } from '@/stores/authStore';
 import { formatDistanceToNow } from '@/lib/utils';
-import Image from 'next/image';
 
 interface PostCardProps {
   post: Post;
@@ -122,7 +121,7 @@ export default function PostCard({ post }: PostCardProps) {
       <header className="post-header">
         <div className="author-info">
           {author?.avatarUrl ? (
-            <Image
+            <img
               src={author.avatarUrl}
               alt={`${author.username}'s avatar`}
               width={40}
@@ -152,7 +151,7 @@ export default function PostCard({ post }: PostCardProps) {
         {post.mediaUrls && post.mediaUrls.length > 0 && (
           <div className="post-media">
             {post.mediaUrls.map((url, index) => (
-              <Image
+              <img
                 key={index}
                 src={url}
                 alt={`Post media ${index + 1}`}
