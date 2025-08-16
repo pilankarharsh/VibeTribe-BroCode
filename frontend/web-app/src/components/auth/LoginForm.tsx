@@ -7,7 +7,7 @@ import { login } from "@/services/login";
 
 export default function LoginForm() {
   const router = useRouter();
-  const setLoading = useAuthStore((s) => s.setLoading);
+  const { setLoading } = useAuthStore();
   const [step, setStep] = useState<1 | 2>(1);
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -25,45 +25,62 @@ export default function LoginForm() {
     setError("");
     setLoading(true);
     try {
-      await login({ identifier, password });
-      router.replace("/splash");
-    } catch (err: any) {
-      setError(err?.message || "Login failed");
-    } finally {
+      const result = await login({ identifier, password });
+      
+      // Check if user has completed onboarding
+      const user = result.user;
+      const isOnboarded = user?.displayName && user?.dob && user?.gender;
+      
+      // Set loading to false before redirecting to avoid the infinite loading state
+      setLoading(false);
+      
+      if (isOnboarded) {
+        router.replace("/home"); // Go to home if onboarding is complete
+      } else {
+        router.replace("/onboarding"); // Go to onboarding if incomplete
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Login failed';
+      setError(errorMessage);
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <div>
-        <h2 className="h2" style={{ fontWeight: "var(--fw-bold)" }}>Welcome Back to VibeTribe</h2>
-        <p className="body" style={{ color: "var(--color-muted-text)", marginTop: "6px" }}>
-          ✨ Feel the vibe. 📱 Scroll with your tribe.
+    <div className="auth-container">
+      <div className="auth-copy">
+        <h2 className="h2 auth-title">Welcome Back to VibeTribe 👋</h2>
+        <p className="body auth-subtitle">
+          Your tribe is waiting to vibe.
         </p>
       </div>
 
       {step === 1 && (
-        <form onSubmit={onContinue} style={{ width: 360, margin: "16px auto 0" }}>
-          <div style={{ display: "grid", gap: 12 }}>
-            <label className="body auth-input-lable" style={{ textAlign: "start" }}>Username or email address</label>
+        <form onSubmit={onContinue} className="auth-form">
+          <div className="form-fields">
+            <label className="auth-input-lable">Username or email address</label>
             <input
               className="auth-input"
               type="text"
+              pattern="[a-z0-9@*"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               required
             />
-            <button type="submit" className="btn btn-primary" disabled={!identifier} style={{ height: "48px" }}>Continue</button>
-            <p className="body" color="var(--color-muted-text)">its your first time to the tribe? <a className="body" style={{ color: "var(--color-info-blue)" }} href="/register">Create account</a></p>
+            <button type="submit" className="btn btn-primary auth-button" disabled={!identifier}>
+              Continue
+            </button>
+            <p className="auth-link">
+              New here? <a href="/register">Create account</a>
+            </p>
           </div>
         </form>
       )}
 
       {step === 2 && (
-        <form onSubmit={onSubmit} style={{ width: 360, margin: "16px auto 0" }}>
-          <div style={{ display: "grid", gap: 12 }}>
-            <label className="body auth-input-lable" style={{ textAlign: "start" }}>Password</label>
+        <form onSubmit={onSubmit} className="auth-form">
+          <div className="form-fields">
+            <label className="auth-input-lable">Password</label>
             <input
               className="auth-input"
               type="password"
@@ -71,11 +88,20 @@ export default function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            {error && <p className="body" style={{ color: "var(--color-error-red)" }}>{error}</p>}
-            <p className="body" color="var(--color-muted-text)"><a className="body" style={{ color: "var(--color-info-blue)" }} href="#">Forgot your password ?</a> No worries</p>
-            <button type="submit" className="btn btn-primary" disabled={!password} style={{ height: "48px" }}>Login</button>
-            <button type="button" className="btn btn-secondary" onClick={() => setStep(1)} style={{ height: "40px" }}>Back</button>
-
+            {error && <p className="auth-error">{error}</p>}
+            <p className="auth-link">
+              <a href="#">Forgot your password?</a> Don’t worry, it happens.
+            </p>
+            <button type="submit" className="btn btn-primary auth-button" disabled={!password}>
+              Login
+            </button>
+            <button 
+              type="button" 
+              className="btn btn-secondary auth-button-secondary" 
+              onClick={() => setStep(1)}
+            >
+              Back
+            </button>
           </div>
         </form>
       )}

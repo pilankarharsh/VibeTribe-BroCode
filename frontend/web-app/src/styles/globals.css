@@ -1,3 +1,35 @@
+
+/* -------------------------
+   Font faces (public/fonts)
+-------------------------- */
+@font-face {
+  font-family: "Avalon";
+  src: url("/fonts/Avalon-Book.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Avalon";
+  src: url("/fonts/Avalon-Demi.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Avalon";
+  src: url("/fonts/Avalon-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Quincy CF";
+  src: url("/fonts/Quincy-CF.ttf") format("truetype");
+  font-style: normal;
+  font-display: swap;
+}
+
 html,
 body {
   max-width: 100vw;
@@ -5,6 +37,8 @@ body {
   background-color: var(--bg-default);
   color: var(--text-default);
   font-family: var(--font-sans);
+  /* Force dark scrollbars in Webkit browsers */
+  color-scheme: dark;
 }
 
 body {
@@ -27,38 +61,6 @@ a {
 a:hover {
   color: var(--brand-primary);
 }
-
-/* -------------------------
-   Scrollbar Styling (Webkit)
--------------------------- */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--surface);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-muted-text);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--brand-primary);
-}
-
-/* -------------------------
-   Typography Classes
--------------------------- */
-.h1 { font-weight: var(--fw-bold); font-size: var(--fs-headline-44); line-height: var(--lh-headline-44); }
-.h2 { font-weight: var(--fw-demi); font-size: var(--fs-headline-28); line-height: var(--lh-headline-28); }
-.h3 { font-weight: var(--fw-demi); font-size: var(--fs-headline-22); line-height: var(--lh-headline-22); }
-.lead { font-weight: var(--fw-regular); font-size: var(--fs-body-18); line-height: var(--lh-body-18); }
-.body { font-weight: var(--fw-regular); font-size: var(--fs-body-15); line-height: var(--lh-body-15); }
-.caption { font-weight: var(--fw-demi); font-size: var(--fs-cap-12); text-transform: uppercase; letter-spacing: 0.08em; }
-
 /* -------------------------
    Form Elements
 -------------------------- */
@@ -85,6 +87,38 @@ input:focus, textarea:focus, select:focus {
 }
 
 /* -------------------------
+   Scrollbar Styling (Webkit)
+-------------------------- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-dark-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-dark-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-primary);
+}
+
+/* -------------------------
+   Typography Classes
+-------------------------- */
+.h1 { font-weight: var(--fw-bold); font-size: var(--fs-headline-44); line-height: var(--lh-headline-44); }
+.h2 { font-weight: var(--fw-demi); font-size: var(--fs-headline-28); line-height: var(--lh-headline-28); }
+.h3 { font-weight: var(--fw-demi); font-size: var(--fs-headline-22); line-height: var(--lh-headline-22); }
+.lead { font-weight: var(--fw-regular); font-size: var(--fs-body-18); line-height: var(--lh-body-18); }
+.body { font-weight: var(--fw-regular); font-size: var(--fs-body-15); line-height: var(--lh-body-15); }
+.caption { font-weight: var(--fw-demi); font-size: var(--fs-cap-12); text-transform: uppercase; letter-spacing: 0.08em; }
+
+
+/* -------------------------
    Buttons
 -------------------------- */
 .btn {
@@ -106,12 +140,17 @@ input:focus, textarea:focus, select:focus {
   color: var(--color-white);
 }
 .btn-primary:disabled {
-  background-color: #7d5cff40;
-  color: var(--color-white);
+  background-color: rgba(124, 92, 255, 0.3);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
 }
 .btn-secondary {
-  background-color: var(--surface);
+  background-color: var(--color-surface);
   color: var(--text-default);
+  border: 1px solid var(--color-border);
+}
+.btn-secondary:hover {
+  background-color: var(--color-surface-hover);
 }
 
 .btn:active {
@@ -124,8 +163,9 @@ input:focus, textarea:focus, select:focus {
 .card {
   background-color: var(--bg-elevated);
   border-radius: var(--card-radius);
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--shadow-dark);
   padding: 1.5rem;
+  border: 1px solid var(--color-border);
 }
 
 /* -------------------------
@@ -191,47 +231,228 @@ a:focus {
     justify-content: center;
   }
 }
+/* Optimized auth input styling - integrated into auth component styles below */
 
 /* -------------------------
-   Font faces (public/fonts)
+   Auth Components
 -------------------------- */
-@font-face {
-  font-family: "Avalon";
-  src: url("/fonts/Avalon-Book.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
+.auth-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 80vh;
+  text-align: left;
 }
-@font-face {
-  font-family: "Avalon";
-  src: url("/fonts/Avalon-Demi.ttf") format("truetype");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
+
+.auth-copy {
+  margin-bottom: 2rem;
+  max-width: 600px;
 }
-@font-face {
-  font-family: "Avalon";
-  src: url("/fonts/Avalon-Bold.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
+
+.auth-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
 }
-@font-face {
-  font-family: "Quincy CF";
-  src: url("/fonts/Quincy-CF.ttf") format("truetype");
-  font-style: normal;
-  font-display: swap;
+
+.auth-subtitle {
+  color: var(--color-muted-text);
+  font-size: clamp(1.1rem, 2vw, 1.25rem);
+  margin: 0;
 }
-.auth-input-lable{
-  color:var(--color-muted-text);
-  text-transform:none;
-  font-weight:var(--fw-bold);
+
+.auth-form {
+  width: 100%;
+  max-width: 400px;
 }
-.auth-input{
+
+.form-fields {
+  display: grid;
+  gap: 1rem;
+}
+
+.auth-button {
+  height: 48px;
+  margin-top: 0.5rem;
+}
+
+.auth-button-secondary {
+  height: 44px;
+  margin-top: 0.5rem;
+}
+
+.auth-error {
+  color: var(--color-error-red);
+  font-size: var(--fs-body-15);
+  margin: 0.5rem 0 0;
+}
+
+.auth-link {
+  color: var(--color-muted-text);
+  font-size: var(--fs-body-15);
+  margin: 0.5rem 0 0;
+}
+
+.auth-link a {
+  color: var(--color-info-blue);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.auth-link a:hover {
+  color: var(--brand-primary);
+}
+
+.auth-description {
+  color: var(--text-muted);
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.button-group {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+/* Auth form specific styling */
+.auth-input-lable {
+  color: var(--color-muted-text);
+  font-size: var(--fs-body-15);
+  font-weight: var(--fw-demi);
+  text-align: left;
+  text-transform: none;
+  margin: 1rem 0 0.5rem 0;
+}
+
+.auth-input {
+  width: 100%;
+  height: 48px;
+  padding: 0.75rem 1rem;
+  font-size: var(--fs-body-15);
+  font-family: var(--font-sans);
+  font-weight: var(--fw-regular);
+  border: 1px solid var(--color-border);
+  border-radius: var(--input-radius);
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: var(--brand-primary);
+  background: var(--color-dark-elevated);
+  box-shadow: var(--focus-ring);
+}
+
+.auth-input::placeholder {
+  color: var(--color-muted-text);
+  opacity: 0.7;
+}
+
+.auth-input:disabled {
+  background: var(--color-dark-bg);
+  color: var(--color-muted-text);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Responsive adjustments for auth forms */
+@media (max-width: 768px) {
+  .auth-container {
+    margin: 0 auto;
+    padding: 1rem;
+  }
+  
+  .auth-copy {
+    text-align: center;
+    margin: 2rem auto 1.5rem;
+  }
+  
+  .auth-form {
+    width: 100%;
+    max-width: none;
+  }
+  
+  .button-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .auth-button,
+  .auth-button-secondary {
+    height: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .button-group {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  
+  .auth-button,
+  .auth-button-secondary {
+    height: 44px;
+  }
+}
+
+/* -------------------------
+   Dark Theme Enhancements
+-------------------------- */
+
+/* Selection styling */
+::selection {
+  background: var(--brand-primary);
+  color: var(--color-white);
+}
+
+::-moz-selection {
+  background: var(--brand-primary);
+  color: var(--color-white);
+}
+
+/* Dark form controls */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+input[type="month"],
+input[type="week"] {
+  color-scheme: dark;
+}
+
+/* Dark autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px var(--color-surface) inset;
+  -webkit-text-fill-color: var(--color-text);
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Focus states for better dark mode */
+input:focus,
+textarea:focus,
+select:focus,
+button:focus {
+  box-shadow: 0 0 0 2px var(--brand-primary), 0 0 0 4px rgba(124, 92, 255, 0.1);
+}
+
+/* Dark borders for better contrast */
+hr {
   border: none;
-  margin: 0 auto;
-  height:48px;
-  background:var(--color-soft-grey) ;
-  border-radius:var(--input-radius);
+  height: 1px;
+  background: var(--color-border);
+}
+
+/* Better dark card styling */
+.card:hover {
+  border-color: var(--color-border);
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
 }
 

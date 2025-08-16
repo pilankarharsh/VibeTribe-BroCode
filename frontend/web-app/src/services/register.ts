@@ -6,8 +6,8 @@ export async function register(data: RegisterRequest): Promise<LoginResponse> {
     const res = await api.post<LoginResponse>('/api/auth/register', data);
     setAuthToken(res.data.token);
     try {
-        useAuthStore.getState().setAuth(null as any, res.data.token);
-    } catch (_) {}
+        useAuthStore.getState().setAuth(res.data.user, res.data.token);
+    } catch { /* ignore */ }
     return res.data;
 }
 export async function checkUsername(username: string): Promise<boolean> {

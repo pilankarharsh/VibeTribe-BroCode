@@ -9,8 +9,7 @@ type Step = 1 | 2 | 3 | 4;
 
 export default function RegisterForm() {
   const router = useRouter();
-  const setLoading = useAuthStore((s) => s.setLoading);
-  const setOnboarded = useAuthStore((s) => s.setOnboarded);
+  const { setLoading } = useAuthStore();
   const [step, setStep] = useState<Step>(1);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -19,6 +18,17 @@ export default function RegisterForm() {
   const [inviteCode, setInviteCode] = useState("");
   const [hasInvite, setHasInvite] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+
+  // Input validation functions
+  const validateUsername = (input: string): string => {
+    // Only allow lowercase letters, numbers, and underscores
+    return input.toLowerCase().replace(/[^a-z0-9_]/g, '');
+  };
+
+  const validateEmail = (input: string): string => {
+    // Only allow lowercase letters, numbers, @, and dots
+    return input.toLowerCase().replace(/[^a-z0-9@.]/g, '');
+  };
 
   const isStrongPassword = (pwd: string) =>
     /[A-Z]/.test(pwd) && /[a-z]/.test(pwd) && /\d/.test(pwd) && /[^A-Za-z0-9]/.test(pwd) && pwd.length >= 8;
@@ -35,8 +45,9 @@ export default function RegisterForm() {
         return;
       }
       setStep(2);
-    } catch (err: any) {
-      setError(err?.message || "Failed to check username");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to check username';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -54,8 +65,9 @@ export default function RegisterForm() {
         return;
       }
       setStep(3);
-    } catch (err: any) {
-      setError(err?.message || "Failed to check email");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to check email';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -67,8 +79,9 @@ export default function RegisterForm() {
       if (password !== confirmPassword) return setError("Passwords do not match");
       if (!isStrongPassword(password)) return setError("Use at least 8 chars with upper, lower, number, and symbol");
       setStep(4);
-    } catch (err: any) {
-      setError(err?.message || "Password Failed");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Password Failed';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -79,11 +92,14 @@ export default function RegisterForm() {
     setError("");
     setLoading(true);
     try {
-      const res = await register({ username, email, password, inviteCode });
-      setOnboarded(false);
-      router.replace("/splash");
-    } catch (err: any) {
-      setError(err?.message || "Registration failed");
+      await register({ username, email, password, inviteCode });
+      
+      // After registration, user will always need to complete onboarding
+      // since they're newly registered
+      router.replace("/onboarding");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Registration failed';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -94,85 +110,152 @@ export default function RegisterForm() {
     setLoading(true);
     try {
       await register({ username, email, password, inviteCode: "" });
-      setOnboarded(false);
-      router.replace("/splash");
-    } catch (err: any) {
-      setError(err?.message || "Failed to join waitlist");
+      // Waitlist join might return different response, handle accordingly
+      // Usually waitlist means the user isn't fully registered yet
+      router.replace("/waitlist");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to join waitlist';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <div>
-        <h2 className="h2" style={{ fontWeight: "var(--fw-bold)" }}>Join VibeTribe</h2>
-        <p className="body" style={{ color: "var(--color-muted-text)", marginTop: "6px" }}>
-          Create your account to start vibing.
+    <div className="auth-container">
+      <div className="auth-copy">
+        <h1 className="h1 auth-title">You have been <br/>invited 🎉</h1>
+        <p className="body auth-subtitle">
+          Member of tribe has invited you to join 
         </p>
       </div>
 
       {step === 1 && (
-        <form onSubmit={submitUsername} style={{ width: 360, margin: "16px auto 0" }}>
-          <div style={{ display: "grid", gap: 12 }}>
-            <label className="body auth-input-lable" style={{ textAlign: "start" }}>Username</label>
-            <input className="auth-input" value={username} onChange={(e) => setUsername(e.target.value)} required />
-            {error && <p className="body" style={{ color: "var(--color-error-red)" }}>{error}</p>}
-            <button type="submit" className="btn btn-primary" style={{ height: 48 }}>Continue</button>
-            <p className="body" style={{ color: "var(--color-muted-text)" }}>
-              Already in the tribe? <a className="body" style={{ color: "var(--color-info-blue)" }} href="/login">Login now</a>
+        <form onSubmit={submitUsername} className="auth-form">
+          <div className="form-fields">
+            <label className="auth-input-lable">Username</label>
+            <input 
+              className="auth-input" 
+              value={username} 
+              onChange={(e) => setUsername(validateUsername(e.target.value))} 
+              placeholder="Only lowercase letters, numbers, and underscores"
+              required 
+            />
+            {error && <p className="auth-error">{error}</p>}
+            <button type="submit" className="btn btn-primary auth-button">
+              Continue
+            </button>
+            <p className="auth-link">
+              Already in the tribe? <a href="/login">Login now</a>
             </p>
           </div>
         </form>
       )}
 
       {step === 2 && (
-        <form onSubmit={submitEmail} style={{ width: 360, margin: "16px auto 0" }}>
-          <div style={{ display: "grid", gap: 12 }}>
-            <label className="body auth-input-lable" style={{ textAlign: "start" }}>Email</label>
-            <input className="auth-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            {error && <p className="body" style={{ color: "var(--color-error-red)" }}>{error}</p>}
-            <button type="submit" className="btn btn-primary" style={{ height: 48 }}>Continue</button>
-            <p className="body" style={{ color: "var(--color-muted-text)" }}>
-              Already in the tribe? <a className="body" style={{ color: "var(--color-info-blue)" }} href="/login">Login now</a>
+        <form onSubmit={submitEmail} className="auth-form">
+          <div className="form-fields">
+            <label className="auth-input-lable">Email</label>
+            <input 
+              className="auth-input" 
+              type="email" 
+              value={email} 
+              onChange={(e) => setEmail(validateEmail(e.target.value))} 
+              placeholder="Only lowercase letters, numbers, @ and dots"
+              required 
+            />
+            {error && <p className="auth-error">{error}</p>}
+            <button type="submit" className="btn btn-primary auth-button">
+              Continue
+            </button>
+            <button 
+              type="button" 
+              className="btn btn-secondary auth-button-secondary" 
+              onClick={() => setStep(1)}
+            >
+              Back
+            </button>
+            <p className="auth-link">
+              Already in the tribe? <a href="/login">Login now</a>
             </p>
           </div>
         </form>
       )}
+      
       {step === 3 && (
-        <form onSubmit={submitPassword} style={{ width: 360, margin: "16px auto 0" }}>
-          <div style={{ display: "grid", gap: 12 }}>
-            <label className="body auth-input-lable" style={{ textAlign: "start" }}>Password</label>
-            <input className="auth-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-            <label className="body auth-input-lable" style={{ textAlign: "start" }}>Confirm Password</label>
-            <input className="auth-input" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
-            {error && <p className="body" style={{ color: "var(--color-error-red)" }}>{error}</p>}
-            <button type="submit" className="btn btn-primary" style={{ height: 48 }}>Continue</button>
+        <form onSubmit={submitPassword} className="auth-form">
+          <div className="form-fields">
+            <label className="auth-input-lable">Password</label>
+            <input 
+              className="auth-input" 
+              type="password" 
+              pattern="[a-z]*"
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              required 
+            />
+            <label className="auth-input-lable">Confirm Password</label>
+            <input 
+              className="auth-input" 
+              type="password" 
+              value={confirmPassword} 
+              onChange={(e) => setConfirmPassword(e.target.value)} 
+              required 
+            />
+            {error && <p className="auth-error">{error}</p>}
+            <button type="submit" className="btn btn-primary auth-button">
+              Continue
+            </button>
+            <button 
+              type="button" 
+              className="btn btn-secondary auth-button-secondary" 
+              onClick={() => setStep(2)}
+            >
+              Back
+            </button>
           </div>
         </form>
       )}
+      
       {step === 4 && (
-        <form onSubmit={onRegister} style={{ width: 360, margin: "16px auto 0" }}>
-          <div style={{ display: "grid", gap: 12, justifyContent:"center" }}>
-            <p className="body" style={{ textAlign: "start", color: "var(--text-muted)" }}>
+        <form onSubmit={onRegister} className="auth-form">
+          <div className="form-fields">
+            <p className="auth-description">
               You need an invite to join. Do you have it?
             </p>
-            <div style={{ display: "flex", gap: 12, justifyContent:"center" }}>
-              <button type="button" className="btn btn-primary" onClick={joinWaitlist}>join waitlist</button>
-              <button type="button" className="btn btn-secondary" onClick={() => setHasInvite(true)}>Yes, I have a code</button>
+            <div className="button-group">
+              <button type="button" className="btn btn-primary" onClick={joinWaitlist}>
+                Join waitlist
+              </button>
+              <button type="button" className="btn btn-secondary" onClick={() => setHasInvite(true)}>
+                Yes, I have a code
+              </button>
             </div>
             {hasInvite && (
               <>
-                <label className="body auth-input-lable" style={{ textAlign: "start" }}>Invite code</label>
-                <input className="auth-input" value={inviteCode} onChange={(e) => setInviteCode(e.target.value)} required />
+                <label className="auth-input-lable">Invite code</label>
+                <input 
+                  className="auth-input" 
+                  value={inviteCode} 
+                  onChange={(e) => setInviteCode(e.target.value)} 
+                  required 
+                />
+                <button type="submit" className="btn btn-primary auth-button">
+                  Create account
+                </button>
               </>
             )}
-            {error && <p className="body" style={{ color: "var(--color-error-red)" }}>{error}</p>}
-            {hasInvite && (
-              <button type="submit" className="btn btn-primary" style={{ height: 48 }}>
-                Create account
-              </button>
-            )}
+            {error && <p className="auth-error">{error}</p>}
+            <button 
+              type="button" 
+              className="btn btn-secondary auth-button-secondary" 
+              onClick={() => {
+                setStep(3);
+                setHasInvite(false);
+              }}
+            >
+              Back
+            </button>
           </div>
         </form>
       )}

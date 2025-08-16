@@ -26,7 +26,7 @@ function readTokenFromCookie(): string | null {
   try {
     const match = document.cookie.match(/(?:^|;\s*)auth_token=([^;]+)/);
     return match ? decodeURIComponent(match[1]) : null;
-  } catch (_) {
+  } catch {
     return null;
   }
 }
@@ -35,9 +35,9 @@ function readTokenFromCookie(): string | null {
 export function setAuthToken(token: string | null): void {
   if (typeof window === 'undefined') {
     if (token) {
-      (api.defaults.headers.common as any).Authorization = `Bearer ${token}`;
+      (api.defaults.headers.common as Record<string, string>).Authorization = `Bearer ${token}`;
     } else {
-      delete (api.defaults.headers.common as any).Authorization;
+      delete (api.defaults.headers.common as Record<string, string>).Authorization;
     }
     return;
   }
@@ -47,12 +47,12 @@ export function setAuthToken(token: string | null): void {
     const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
     const secureFlag = isHttps ? '; secure' : '';
     document.cookie = `auth_token=${encodeURIComponent(token)}; path=/; max-age=${60 * 60 * 24 * 30}; samesite=lax${secureFlag}`;
-    (api.defaults.headers.common as any).Authorization = `Bearer ${token}`;
+    (api.defaults.headers.common as Record<string, string>).Authorization = `Bearer ${token}`;
   } else {
     const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
     const secureFlag = isHttps ? '; secure' : '';
     document.cookie = `auth_token=; path=/; max-age=0; samesite=lax${secureFlag}`;
-    delete (api.defaults.headers.common as any).Authorization;
+    delete (api.defaults.headers.common as Record<string, string>).Authorization;
   }
 }
 
@@ -61,14 +61,14 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   let token: string | null = null;
   try {
     token = useAuthStore.getState().token || null;
-  } catch (_) {
+  } catch {
     token = null;
   }
   if (!token) {
     token = readTokenFromCookie();
   }
   if (token) {
-    (config.headers as any)['Authorization'] = `Bearer ${token}`;
+    (config.headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
   }
   return config;
 });

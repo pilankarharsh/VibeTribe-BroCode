@@ -17,6 +17,7 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   token: string;
+  user: User;
 }
 
 export interface InviteCodeRequest {
@@ -28,6 +29,8 @@ export interface User {
   username: string;
   email: string;
   displayName?: string;
+  dob?: string;
+  gender?: 'male' | 'female' | 'other' | 'prefer-not-to-say';
   avatarUrl?: string;
   bio?: string;
   verified: boolean;
@@ -114,6 +117,8 @@ export interface MessageResponse {
 }
 export interface UpdateProfileRequest {
   displayName?: string;
+  dob?: string;
+  gender?: 'male' | 'female' | 'other' | 'prefer-not-to-say';
   avatarUrl?: string;
   bio?: string;
 }

@@ -1,45 +1,87 @@
 "use client";
 
-import { useEffect, useState, type ReactElement } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/authStore";
-type StoreWithPersist = typeof useAuthStore & {
-  persist?: {
-    onFinishHydration: (callback: () => void) => () => void;
-    hasHydrated: () => boolean;
-  };
-};
-
 
 export default function SplashPage() {
   const router = useRouter();
-  const [hasHydrated, setHasHydrated] = useState<boolean>(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const store = useAuthStore as StoreWithPersist;
-    const unsubscribe = store.persist?.onFinishHydration(() => {
-      setHasHydrated(true);
-    });
+    setMounted(true);
+    console.log('Splash page mounted');
 
-    if (store.persist?.hasHydrated()) {
-      setHasHydrated(true);
-    }
+    // Always redirect after a maximum timeout, regardless of hydration status
+    const maxTimeoutId = setTimeout(() => {
+      console.log('Max timeout reached, forcing redirect to login');
+      router.replace('/login');
+    }, 3000); // 3 second maximum
+
+    // Quick check after mount
+    const quickCheckId = setTimeout(() => {
+      console.log('Quick check triggered');
+      const { token, user, setLoading } = useAuthStore.getState();
+      
+      console.log('Auth state check:', {
+        hasToken: !!token,
+        tokenLength: token?.length || 0,
+        hasUser: !!user,
+        userId: user?._id,
+        displayName: user?.displayName,
+        dob: user?.dob,
+        gender: user?.gender
+      });
+      
+      setLoading(false);
+      
+      // Clear the max timeout since we're handling routing now
+      clearTimeout(maxTimeoutId);
+      
+      let nextPath: string;
+      
+      if (!token) {
+        nextPath = "/register";
+        console.log('→ Redirecting to REGISTER (no token)');
+      } else if (!user) {
+        nextPath = "/register"; 
+        console.log('→ Redirecting to REGISTER (no user)');
+      } else {
+        // Check onboarding status
+        const hasDisplayName = !!user.displayName;
+        const hasDob = !!user.dob;
+        const hasGender = !!user.gender;
+        const isOnboarded = hasDisplayName && hasDob && hasGender;
+        
+        console.log('Onboarding check:', {
+          hasDisplayName,
+          hasDob, 
+          hasGender,
+          isOnboarded
+        });
+        
+        if (isOnboarded) {
+          nextPath = "/home";
+          console.log('→ Redirecting to HOME (onboarded)');
+        } else {
+          nextPath = "/onboarding";
+          console.log('→ Redirecting to ONBOARDING (incomplete)');
+        }
+      }
+      
+      console.log(`Navigating to: ${nextPath}`);
+      router.replace(nextPath);
+    }, 1000); // 1 second delay
 
     return () => {
-      if (typeof unsubscribe === "function") unsubscribe();
+      clearTimeout(maxTimeoutId);
+      clearTimeout(quickCheckId);
     };
-  }, []);
+  }, [router]);
 
-  useEffect(() => {
-    if (!hasHydrated) return;
-
-    const { token, isOnboarded, setLoading } = useAuthStore.getState();
-    setLoading(false);
-
-    const nextPath = !token ? "/login" : isOnboarded ? "/home" : "/onboarding";
-    router.replace(nextPath);
-  
-}, [hasHydrated, router]);
+  if (!mounted) {
+    return null; // Prevent hydration mismatch
+  }
 
   return (
     <div

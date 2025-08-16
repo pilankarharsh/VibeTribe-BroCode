@@ -6,15 +6,15 @@ export async function login(data: LoginRequest): Promise<LoginResponse> {
   const res = await api.post<LoginResponse>("/api/auth/login", data);
   setAuthToken(res.data.token);
   try {
-    // No user profile returned yet; store token only
-    useAuthStore.getState().setAuth(null as any, res.data.token);
-  } catch (_) {}
+    // Store user data and token
+    useAuthStore.getState().setAuth(res.data.user, res.data.token);
+  } catch { /* ignore */ }
   return res.data;
 }
 
 export async function logout() {
     const res = await api.post('/api/auth/logout');
     setAuthToken(null);
-    try { useAuthStore.getState().clearAuth(); } catch (_) {}
+    try { useAuthStore.getState().clearAuth(); } catch { /* ignore */ }
     return res.status;
 }

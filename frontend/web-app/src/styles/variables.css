@@ -17,30 +17,38 @@
     --color-soft-grey: #f1f1f1;        /* background / surface */
     --color-muted-text: #8A8A8A;      /* gray for secondary text */
   
-    /* Semantic aliases */
+    /* Dark theme colors */
+    --color-dark-bg: #0b0b0d;
+    --color-dark-elevated: #111114;
+    --color-dark-surface: #0f1113;
+    --color-dark-text: #f7f7f8;
+    --color-dark-muted: #9aa0a6;
+    --color-dark-border: #2a2a2e;
+    --color-dark-hover: #1a1a1e;
+  
+    /* Semantic aliases - Dark Theme Default */
     --brand-primary: var(--color-lavender-purple);
+    --brand-primary-dark: #6a4ef0;
     --brand-accent: var(--color-electric-pink);
     --brand-cta: var(--color-sun-yellow);
   
-    --bg-default: var(--color-white);
-    --bg-elevated: #ffffff;
-    --text-default: var(--color-black);
-    --text-muted: var(--color-muted-text);
-    --surface: var(--color-soft-grey);
+    /* Default to dark theme */
+    --bg-default: var(--color-dark-bg);
+    --bg-elevated: var(--color-dark-elevated);
+    --color-background: var(--color-dark-bg);
+    --color-surface: var(--color-dark-surface);
+    --color-surface-hover: var(--color-dark-hover);
+    --color-border: var(--color-dark-border);
+    --text-default: var(--color-dark-text);
+    --color-text: var(--color-dark-text);
+    --text-muted: var(--color-dark-muted);
+    --color-muted-text: var(--color-dark-muted);
+    --surface: var(--color-dark-surface);
   
-    /* ---------------------- */
-    /* Dark mode overrides   */
-    /* (toggle these in a .dark class or data-theme="dark") */
-    /* ---------------------- */
-  }
-  
-  [data-theme="dark"] {
-    --bg-default: #0b0b0d;
-    --bg-elevated: #111114;
-    --text-default: #f7f7f8;
-    --text-muted: #9aa0a6;
-    --surface: #0f1113;
-  }
+  /* ---------------------- */
+  /* Enhanced Dark Theme    */
+  /* ---------------------- */
+}
   
   /* ---------------------- */
   /* Typography tokens      */
@@ -102,7 +110,9 @@
   /* Accessibility helpers */
   /* ---------------------- */
   :root {
-    --focus-ring: 3px solid rgba(61, 61, 61, 0.18);
+    --focus-ring: 0 0 0 2px var(--brand-primary);
+    --shadow-dark: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.3);
   }
   
   /* ---------------------- */
