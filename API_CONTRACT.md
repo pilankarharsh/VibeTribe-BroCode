@@ -140,7 +140,8 @@ This document defines the RESTful API contract for VibeTribe application. Regist
 - **Success Response (201 Created):**
 ```json
 {
-  "token": "string"
+  "token": "string",
+  "user": "<User>"
 }
 ```
 - **Error Response (400 Bad Request):**
@@ -212,7 +213,8 @@ This document defines the RESTful API contract for VibeTribe application. Regist
 - **Success Response (200 OK):**
 ```json
 {
-  "token": "string"
+  "token": "string",
+  "user": "<User>"
 }
 ```
 - **Error Response (401 Unauthorized):**
@@ -549,6 +551,25 @@ This document defines the RESTful API contract for VibeTribe application. Regist
 ```json
 {
   "error": "Post not found."
+}
+```
+
+### Check If Post Is Liked
+**Feature:** Check if current user liked a post
+- **Method:** GET
+- **Path:** `/api/posts/:postId/is-liked`
+- **Description:** Check whether the authenticated user has liked a specific post.
+- **Headers:** `Authorization: Bearer <token>`
+- **Success Response (200 OK):**
+```json
+{
+  "isLiked": true
+}
+```
+- **Error Response (401 Unauthorized):**
+```json
+{
+  "error": "Not authenticated."
 }
 ```
 
