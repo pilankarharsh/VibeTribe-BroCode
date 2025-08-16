@@ -40,6 +40,7 @@ const createUser = async (req, res) => {
         const user = await User.create({ username, email, password: hashPassword });
         if (isCodeValid) {
             isCodeValid.isUsed = true;
+            isCodeValid.usedBy = user._id;
             await isCodeValid.save();
         }
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "60d" });
@@ -47,7 +48,24 @@ const createUser = async (req, res) => {
         // Remove from waitlist if present
         try { await WaitlistUser.findOneAndDelete({ email }); } catch (_) {}
 
-        return res.status(201).json({ token });
+        // Return user details without password
+        const userDetails = {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            displayName: user.displayName,
+            dob: user.dob,
+            gender: user.gender,
+            avatarUrl: user.avatarUrl,
+            bio: user.bio,
+            verified: user.verified,
+            followersCount: user.followersCount,
+            followingCount: user.followingCount,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt
+        };
+
+        return res.status(201).json({ token, user: userDetails });
     }catch(error) {
         res.status(500).json({ error: error.message });
     }
@@ -72,7 +90,25 @@ const checkUser = async (req, res) =>{
             return res.status(401).json({ error: "Invalid credentials." });
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "60d" });
-        return res.status(200).json({ token });
+        
+        // Return user details without password
+        const userDetails = {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            displayName: user.displayName,
+            dob: user.dob,
+            gender: user.gender,
+            avatarUrl: user.avatarUrl,
+            bio: user.bio,
+            verified: user.verified,
+            followersCount: user.followersCount,
+            followingCount: user.followingCount,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt
+        };
+        
+        return res.status(200).json({ token, user: userDetails });
     }catch(error){
         res.status(500).json({ error: error.message });
     }

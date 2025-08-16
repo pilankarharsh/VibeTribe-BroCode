@@ -17,14 +17,22 @@ export const updateUserProfile = async (req, res) => {
     const { userId } = req.params;
     if (req.userId !== userId) return res.status(401).json({ error: 'Not authenticated.' });
 
-    const { displayName, bio, avatarUrl } = req.body || {};
-    if (displayName === undefined && bio === undefined && avatarUrl === undefined) {
+    const { displayName, bio, avatarUrl, dob, gender } = req.body || {};
+    if (displayName === undefined && bio === undefined && avatarUrl === undefined && dob === undefined && gender === undefined) {
       return res.status(400).json({ error: 'Invalid input.' });
     }
 
+    // Build update object with only defined fields
+    const updateFields = {};
+    if (displayName !== undefined) updateFields.displayName = displayName;
+    if (bio !== undefined) updateFields.bio = bio;
+    if (avatarUrl !== undefined) updateFields.avatarUrl = avatarUrl;
+    if (dob !== undefined) updateFields.dob = dob;
+    if (gender !== undefined) updateFields.gender = gender;
+
     const user = await User.findByIdAndUpdate(
       userId,
-      { $set: { displayName, bio, avatarUrl } },
+      { $set: updateFields },
       { new: true, runValidators: true }
     ).select('-password');
     if (!user) return res.status(404).json({ error: 'User not found.' });
