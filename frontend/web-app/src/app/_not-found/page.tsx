@@ -38,7 +38,7 @@ export default function NotFoundPage() {
             lineHeight: '1.75',
             color: '#6b7280'
           }}>
-            This vibe doesn&apos;t exist in the tribe. Let&apos;s get you back to the good vibes!
+            This vibe doesn't exist in the tribe. Let's get you back to the good vibes!
           </p>
           
           <div style={{
