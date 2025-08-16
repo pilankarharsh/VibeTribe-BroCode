@@ -30,8 +30,24 @@ export default function RegisterForm() {
     return input.toLowerCase().replace(/[^a-z0-9@.]/g, '');
   };
 
-  const isStrongPassword = (pwd: string) =>
-    /[A-Z]/.test(pwd) && /[a-z]/.test(pwd) && /\d/.test(pwd) && /[^A-Za-z0-9]/.test(pwd) && pwd.length >= 8;
+  const isStrongPassword = (pwd: string) : boolean => {
+    // At least 8 characters
+    if (pwd.length < 8) return false;
+    
+    // At least 1 uppercase letter
+    if (!/[A-Z]/.test(pwd)) return false;
+    
+    // At least 1 lowercase letter
+    if (!/[a-z]/.test(pwd)) return false;
+    
+    // At least 1 number
+    if (!/\d/.test(pwd)) return false;
+    
+    // At least 1 special character/symbol
+    if (!/[^A-Za-z0-9]/.test(pwd)) return false;
+    
+    return true;
+  };
 
   const submitUsername = async (e: React.FormEvent) => {
     e.preventDefault();
