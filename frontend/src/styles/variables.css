@@ -53,13 +53,13 @@
   /* ---------------------- */
   /* Typography tokens      */
   /* ---------------------- */
-  /* Primary display font: Avalon Quincy CF (headline family)
+  /* Primary display font: Avalon Editorial (headline family)
      Secondary serif (as fallback / body serif) */
   :root {
     --font-sans: "Avalon", Inter, system-ui, -apple-system, "Segoe UI",
       Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji",
       "Segoe UI Symbol";
-    --font-serif: "Quincy CF","Georgia", "Times New Roman", serif;
+    --font-serif: "Editorial","Georgia", "Times New Roman", serif;
   
     /* Font weights (use naming from typography guide) */
     --fw-regular: 400;

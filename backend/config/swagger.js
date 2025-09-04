@@ -8,12 +8,13 @@ const __dirname = path.dirname(__filename);
 const swaggerDefinition = {
   openapi: '3.0.3',
   info: {
-    title: 'VibeTribe API',
+    title: 'VibeTribe API (Production)',
     version: '1.0.0',
-    description: 'Interactive API documentation for VibeTribe'
+    description: 'Interactive API documentation for VibeTribe Production Environment'
   },
   servers: [
-    { url: 'http://localhost:5000', description: 'Local' }
+    { url: 'https://api.vibetribe.com', description: 'Production' },
+    { url: 'http://localhost:5000', description: 'Local Development' }
   ],
   components: {
     securitySchemes: {
@@ -38,5 +39,3 @@ const options = {
 const swaggerSpec = swaggerJSDoc(options);
 
 export default swaggerSpec;
-
-

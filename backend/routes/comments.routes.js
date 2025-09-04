@@ -7,14 +7,14 @@ const router = express.Router();
 router.delete('/:commentId', auth, deleteComment);
 router.patch('/:commentId', auth, editComment);
 
-export default router;
-
 /**
  * @openapi
  * /api/comments/{commentId}:
  *   delete:
  *     summary: Delete a comment
  *     tags: [Comments]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: commentId
@@ -26,9 +26,13 @@ export default router;
  *         description: No Content
  *       404:
  *         description: Comment not found
+ *       401:
+ *         description: Not authenticated
  *   patch:
  *     summary: Edit a comment
  *     tags: [Comments]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: commentId
@@ -48,6 +52,8 @@ export default router;
  *         description: OK
  *       400:
  *         description: Invalid input
+ *       401:
+ *         description: Not authenticated
  */
 
-
+export default router;

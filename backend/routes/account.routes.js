@@ -8,14 +8,14 @@ const router = express.Router();
 router.post('/change-password', auth, changePassword);
 router.delete('/', auth, deleteAccount);
 
-export default router;
-
 /**
  * @openapi
  * /api/account/change-password:
  *   post:
  *     summary: Change current user's password
  *     tags: [Account]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -23,20 +23,24 @@ export default router;
  *           schema:
  *             type: object
  *             properties:
- *               old_password:
+ *               oldPassword:
  *                 type: string
- *               new_password:
+ *               newPassword:
  *                 type: string
  *     responses:
  *       200:
  *         description: Password changed
  *       400:
  *         description: Incorrect old password
+ *       401:
+ *         description: Not authenticated
  *
  * /api/account:
  *   delete:
  *     summary: Delete current user's account
  *     tags: [Account]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       204:
  *         description: No Content
@@ -44,4 +48,4 @@ export default router;
  *         description: Not authenticated
  */
 
-
+export default router;

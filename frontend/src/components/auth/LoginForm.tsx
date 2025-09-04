@@ -68,7 +68,7 @@ export default function LoginForm() {
               required
             />
             <button type="submit" className="btn btn-primary auth-button" disabled={!identifier}>
-              Continue
+              Sign In
             </button>
             <p className="auth-link">
               New here? <a href="/register">Create account</a>

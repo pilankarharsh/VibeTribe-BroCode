@@ -7,14 +7,14 @@ const router = express.Router();
 router.get('/home', auth, getHomeFeed);
 router.get('/explore', getExploreFeed);
 
-export default router;
-
 /**
  * @openapi
  * /api/feed/home:
  *   get:
  *     summary: Get home feed (followed users)
  *     tags: [Feed]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: OK
@@ -29,5 +29,7 @@ export default router;
  *       200:
  *         description: OK
  */
+
+export default router;
 
 

@@ -6,15 +6,17 @@ export default function InteractiveHeroSection() {
     const [hueRotation, setHueRotation] = useState(0);
     const [containerSize, setContainerSize] = useState({ width: 800, height: 600 });
 
-    // Track mouse movement and container size
     useEffect(() => {
-        const handleMouseMove = (e) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            setMousePosition({ x, y });
+        const handleMouseMove = (e: MouseEvent) => {
+            if (e.currentTarget && e.currentTarget instanceof Element) {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                setMousePosition({ x, y });
+            }
         };
 
+    
         const handleResize = () => {
             const heroSection = document.querySelector('.hero-section');
             if (heroSection) {
@@ -25,7 +27,7 @@ export default function InteractiveHeroSection() {
 
         const heroSection = document.querySelector('.hero-section');
         if (heroSection) {
-            heroSection.addEventListener('mousemove', handleMouseMove);
+            heroSection.addEventListener('mousemove', handleMouseMove as EventListener);
             
             // Initial size calculation
             const rect = heroSection.getBoundingClientRect();
@@ -36,7 +38,7 @@ export default function InteractiveHeroSection() {
         
         return () => {
             if (heroSection) {
-                heroSection.removeEventListener('mousemove', handleMouseMove);
+                heroSection.removeEventListener('mousemove', handleMouseMove as EventListener);
             }
             window.removeEventListener('resize', handleResize);
         };
@@ -59,7 +61,7 @@ export default function InteractiveHeroSection() {
         const moveY = (mousePosition.y - centerY) / 40;
         
         // Responsive offset based on screen size
-        const offsetX = containerSize.width * 0.18; // 18% of container width
+        const offsetX = containerSize.width * 0.215; // 18% of container width
         const offsetY = containerSize.height * 0.16; // 16% of container height
         
         return `translate(${moveX + offsetX}px, ${moveY + offsetY}px)`;
@@ -73,8 +75,8 @@ export default function InteractiveHeroSection() {
         const moveY = (mousePosition.y - centerY) / 40;
         
         // Responsive offset based on screen size
-        const offsetX = containerSize.width * 0.04; // 4% of container width
-        const offsetY = containerSize.height * 0.13; // 13% of container height
+        const offsetX = containerSize.width * 0.08; // 4% of container width
+        const offsetY = containerSize.height * 0.01; // 13% of container height
         
         return `translate(${moveX + offsetX}px, ${moveY + offsetY}px)`;
     };
@@ -151,7 +153,7 @@ export default function InteractiveHeroSection() {
                     right: 0,
                     bottom: 0,
                     backgroundImage: "url(/images/flash.avif)",
-                    backgroundSize: "cover",
+                    backgroundSize: "contain",
                     backgroundPosition: "center",
                     backgroundRepeat: "no-repeat",
                     mixBlendMode: "screen",

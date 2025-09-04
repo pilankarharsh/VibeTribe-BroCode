@@ -18,8 +18,6 @@ const router = express.Router();
 router.get('/search', searchUsers);
 router.get('/check-username', checkUsernameExists);
 router.get('/check-email', checkEmailExists);
-// Add to waitlist on email checkpoint during registration flow
-// This endpoint is optional if handled in frontend + register; keeping explicit for clarity would require another controller.
 router.get('/:userId', getUserProfile);
 router.patch('/:userId', auth, updateUserProfile);
 router.post('/:userId/follow', auth, followUser);
@@ -84,6 +82,8 @@ router.get('/:userId/posts', getUserPosts);
  *   patch:
  *     summary: Update current user's profile
  *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -96,11 +96,19 @@ router.get('/:userId/posts', getUserPosts);
  *                 type: string
  *               avatarUrl:
  *                 type: string
+ *               dob:
+ *                 type: string
+ *                 format: date
+ *               gender:
+ *                 type: string
+ *                 enum: ["male", "female", "other", "prefer-not-to-say"]
  *     responses:
  *       200:
  *         description: OK
  *       400:
  *         description: Invalid input
+ *       401:
+ *         description: Not authenticated
  */
 
 /**

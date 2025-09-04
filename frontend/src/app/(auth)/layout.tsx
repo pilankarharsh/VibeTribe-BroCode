@@ -16,6 +16,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             padding: 20px !important;
           }
           .hero-section {
+            margin: 0 auto!important;
             flex: 0 0 300px !important;
             min-height: 300px !important;
           }
@@ -62,6 +63,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           flex: "0 0 50%",
           position: "relative",
           minHeight: "80vh",
+          width:"80vw",
           margin:"40px 0",
           display: "flex",
           borderRadius: "100px",
