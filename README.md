@@ -22,18 +22,19 @@ Backend:
 - **Node.js** + **Express**
 
 Database:
-- **PostgreSQL**
 - **MongoDB**
-
+  
+Storage:
+- **Supabase**
 APIs:
-- **REST** / **GraphQL** (TBD)
+- **REST** **
 
 Deployment:
 - Web: **Vercel**
 - Backend: **Railway**
 - Mobile: **Expo EAS**
 
-> _Some tools may be finalized during development._
+> _Some tools may be finalised during development._
 
 ---
 
