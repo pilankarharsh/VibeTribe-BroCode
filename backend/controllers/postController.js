@@ -2,6 +2,7 @@ import Post from '../models/Post.js';
 import Like from '../models/Like.js';
 import Comment from '../models/Comment.js';
 import Report from '../models/Report.js';
+import mongoose from 'mongoose';
 
 export const createPost = async (req, res) => {
   const { caption, mediaUrls } = req.body || {};
@@ -53,12 +54,15 @@ export const editPost = async (req, res) => {
 
 export const likePost = async (req, res) => {
   try {
+    const userObjectId = new mongoose.Types.ObjectId(req.userId);
+    const postObjectId = new mongoose.Types.ObjectId(req.params.postId);
+    
     try {
-      await Like.create({ userId: req.userId, postId: req.params.postId });
+      await Like.create({ userId: userObjectId, postId: postObjectId });
     } catch (e) {
       return res.status(400).json({ error: 'Post already liked.' });
     }
-    await Post.findByIdAndUpdate(req.params.postId, { $inc: { likeCount: 1 } });
+    await Post.findByIdAndUpdate(postObjectId, { $inc: { likeCount: 1 } });
     return res.status(200).json({ message: 'Post liked.' });
   } catch (err) {
     return res.status(500).json({ error: err.message });
@@ -67,9 +71,12 @@ export const likePost = async (req, res) => {
 
 export const unlikePost = async (req, res) => {
   try {
-    const result = await Like.findOneAndDelete({ userId: req.userId, postId: req.params.postId });
+    const userObjectId = new mongoose.Types.ObjectId(req.userId);
+    const postObjectId = new mongoose.Types.ObjectId(req.params.postId);
+    
+    const result = await Like.findOneAndDelete({ userId: userObjectId, postId: postObjectId });
     if (!result) return res.status(400).json({ error: 'Post not liked.' });
-    await Post.findByIdAndUpdate(req.params.postId, { $inc: { likeCount: -1 } });
+    await Post.findByIdAndUpdate(postObjectId, { $inc: { likeCount: -1 } });
     return res.status(200).json({ message: 'Post unliked.' });
   } catch (err) {
     return res.status(500).json({ error: err.message });
@@ -88,8 +95,13 @@ export const getPostLikes = async (req, res) => {
 
 export const isPostLikedByUser = async (req, res) => {
   try {
-    const like = await Like.findOne({ userId: req.userId, postId: req.params.postId });
-    return res.status(200).json({ isLiked: !!like });
+    const userObjectId = new mongoose.Types.ObjectId(req.userId);
+    const postObjectId = new mongoose.Types.ObjectId(req.params.postId);
+    
+    const like = await Like.findOne({ userId: userObjectId, postId: postObjectId });
+    const isLiked = !!like;
+    
+    return res.status(200).json({ isLiked });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -101,7 +113,11 @@ export const addComment = async (req, res) => {
   try {
     const comment = await Comment.create({ postId: req.params.postId, authorId: req.userId, content });
     await Post.findByIdAndUpdate(req.params.postId, { $inc: { commentCount: 1 } });
-    return res.status(201).json(comment);
+    
+    const populatedComment = await Comment.findById(comment._id)
+      .populate('authorId', 'username profilePicture');
+    
+    return res.status(201).json(populatedComment);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -109,7 +125,9 @@ export const addComment = async (req, res) => {
 
 export const getComments = async (req, res) => {
   try {
-    const comments = await Comment.find({ postId: req.params.postId }).sort({ createdAt: 1 });
+    const comments = await Comment.find({ postId: req.params.postId })
+      .populate('authorId', 'username profilePicture')
+      .sort({ createdAt: 1 });
     return res.status(200).json(comments);
   } catch (err) {
     return res.status(500).json({ error: err.message });

@@ -10,28 +10,13 @@ export default function SplashPage() {
 
   useEffect(() => {
     setMounted(true);
-    console.log('Splash page mounted');
 
-    // Always redirect after a maximum timeout, regardless of hydration status
     const maxTimeoutId = setTimeout(() => {
-      console.log('Max timeout reached, forcing redirect to login');
       router.replace('/login');
-    }, 3000); // 3 second maximum
+    }, 3000);
 
-    // Quick check after mount
     const quickCheckId = setTimeout(() => {
-      console.log('Quick check triggered');
       const { token, user, setLoading } = useAuthStore.getState();
-      
-      console.log('Auth state check:', {
-        hasToken: !!token,
-        tokenLength: token?.length || 0,
-        hasUser: !!user,
-        userId: user?._id,
-        displayName: user?.displayName,
-        dob: user?.dob,
-        gender: user?.gender
-      });
       
       setLoading(false);
       
@@ -42,34 +27,21 @@ export default function SplashPage() {
       
       if (!token) {
         nextPath = "/register";
-        console.log('→ Redirecting to REGISTER (no token)');
       } else if (!user) {
         nextPath = "/register"; 
-        console.log('→ Redirecting to REGISTER (no user)');
       } else {
-        // Check onboarding status
         const hasDisplayName = !!user.displayName;
         const hasDob = !!user.dob;
         const hasGender = !!user.gender;
         const isOnboarded = hasDisplayName && hasDob && hasGender;
         
-        console.log('Onboarding check:', {
-          hasDisplayName,
-          hasDob, 
-          hasGender,
-          isOnboarded
-        });
-        
         if (isOnboarded) {
           nextPath = "/home";
-          console.log('→ Redirecting to HOME (onboarded)');
         } else {
           nextPath = "/onboarding";
-          console.log('→ Redirecting to ONBOARDING (incomplete)');
         }
       }
       
-      console.log(`Navigating to: ${nextPath}`);
       router.replace(nextPath);
     }, 1000); // 1 second delay
 

@@ -1,5 +1,5 @@
 import Cropper from "react-easy-crop";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface PixelCrop {
   x: number;
@@ -72,13 +72,16 @@ export default function AvatarUploader({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) {
-      console.warn("⚠️ No file selected");
       return;
     }
-    console.log("📂 File selected:", selectedFile.name, selectedFile.type, selectedFile.size, "bytes");
 
+    // Reset the input value to allow selecting the same file again
+    e.target.value = '';
+    
+    // Update states synchronously
     setFile(selectedFile);
-    setPreview(URL.createObjectURL(selectedFile));
+    const previewUrl = URL.createObjectURL(selectedFile);
+    setPreview(previewUrl);
     setIsCropping(true);
     onCroppingStateChange?.(true);
   };
@@ -91,8 +94,11 @@ export default function AvatarUploader({
     if (!preview || !croppedAreaPixels) return;
     try {
       const croppedFile = await getCroppedImg(preview, croppedAreaPixels);
-      console.log("✅ Cropped file ready:", croppedFile.name, croppedFile.size, "bytes");
       onFileSelect(croppedFile);
+      
+      // Reset states after successful cropping
+      setFile(null);
+      setPreview(null);
       setIsCropping(false);
       onCroppingStateChange?.(false);
     } catch (error) {
@@ -103,6 +109,7 @@ export default function AvatarUploader({
       onCroppingStateChange?.(false);
     }
   };
+
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -159,11 +166,11 @@ export default function AvatarUploader({
         </>
       )}
 
-      {file && isCropping && (
+      {file && isCropping && preview && (
         <>
           <div style={{ position: "relative", width: 300, height: 300, marginBottom: 16 }}>
             <Cropper
-              image={preview!}
+              image={preview}
               crop={crop}
               zoom={zoom}
               aspect={1}
@@ -180,6 +187,12 @@ export default function AvatarUploader({
             Done
           </button>
         </>
+      )}
+      
+      {file && !isCropping && (
+        <div style={{ color: 'var(--text-muted)', padding: '1rem' }}>
+          File selected but cropping interface not showing. Debug info: file={file?.name}, isCropping={isCropping}, preview={!!preview}
+        </div>
       )}
     </div>
   );

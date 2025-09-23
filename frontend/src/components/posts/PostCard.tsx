@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
-import { Post, User } from '@/types';
-import { likePost, unlikePost, addComment, getComments, isPostLikedByUser } from '@/services/posts';
-import { getUser } from '@/services/user';
+import { Post, User, PopulatedComment } from '../../types';
+import { getComments, addComment, likePost, unlikePost, isPostLikedByUser } from '../../services/posts';
+import { getUser } from '../../services/user';
 import { useAuthStore } from '@/stores/authStore';
 import { formatDistanceToNow } from '@/lib/utils';
 
@@ -26,7 +26,7 @@ export default function PostCard({ post }: PostCardProps) {
   const [likeCount, setLikeCount] = useState(post.likeCount);
   const [commentCount, setCommentCount] = useState(post.commentCount);
   const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<PopulatedComment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [isLoadingComments, setIsLoadingComments] = useState(false);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
@@ -42,10 +42,9 @@ export default function PostCard({ post }: PostCardProps) {
 
   const checkLikeStatus = useCallback(async () => {
     try {
-      const { isLiked: liked } = await isPostLikedByUser(post._id, user?._id);
-      setIsLiked(liked);
+      const result = await isPostLikedByUser(post._id, user?._id);
+      setIsLiked(result.isLiked);
     } catch (error) {
-      console.error('Failed to check like status:', error);
       // If API fails, assume not liked
       setIsLiked(false);
     }
@@ -72,18 +71,36 @@ export default function PostCard({ post }: PostCardProps) {
   };
 
   const handleLike = async () => {
+    const previousLiked = isLiked;
+    const previousCount = likeCount;
+    
     try {
       if (isLiked) {
-        await unlikePost(post._id);
         setIsLiked(false);
         setLikeCount(prev => prev - 1);
+        await unlikePost(post._id);
       } else {
-        await likePost(post._id);
         setIsLiked(true);
         setLikeCount(prev => prev + 1);
+        await likePost(post._id);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to toggle like:', error);
+      console.error('Error details:', error?.response?.data);
+      
+      // Revert optimistic update
+      setIsLiked(previousLiked);
+      setLikeCount(previousCount);
+      
+      // Handle specific error cases
+      if (error?.response?.status === 400) {
+        const errorMessage = error?.response?.data?.error || '';
+        
+        // Force refresh like status to sync with backend
+        setTimeout(() => {
+          checkLikeStatus();
+        }, 100);
+      }
     }
   };
 
@@ -208,7 +225,7 @@ export default function PostCard({ post }: PostCardProps) {
             <div className="comments-list">
               {comments.map((comment) => (
                 <div key={comment._id} className="comment">
-                  <span className="comment-author">@{comment.authorId}</span>
+                  <span className="comment-author">@{comment.authorId?.username || 'Unknown User'}</span>
                   <span className="comment-text">{comment.content}</span>
                 </div>
               ))}

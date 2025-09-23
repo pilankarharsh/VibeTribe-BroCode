@@ -1,41 +1,152 @@
-# Node modules
-node_modules/
-#production
-backend-production/
-frontend-production/
-# Logs
-logs/
-*.log
+# ===================================
+# VibeTribe - Full Stack .gitignore
+# ===================================
 
-# Env files
+# Dependencies
+# ============
+node_modules/
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Environment Variables
+# =====================
 .env
 .env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Build outputs
+# Build Outputs
+# =============
 dist/
 build/
 out/
+.next/
+.tmp/
+temp/
 
-# IDEs
-.vscode/
-.idea/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Expo specific
-apps/mobile/.expo/
-apps/mobile/.expo-shared/
-
-# Next.js
-apps/web/.next/
-apps/web/out/
-
-# API
-backend/api/.cache/
-
-# Misc
+# Logs
+# ====
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Runtime Data
+# ============
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage & Testing
+# ==================
+coverage/
+.nyc_output/
+.coverage/
+*.lcov
+
+# Cache Directories
+# =================
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# TypeScript
+# ==========
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE/Editor Files
+# ================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS Generated Files
+# ==================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Deployment
+# ==========
+.vercel
+.netlify/
+
+# Database
+# ========
+*.sqlite
+*.sqlite3
+*.db
+
+# Uploads & Media
+# ===============
+uploads/
+public/uploads/
+
+# SSL Certificates & Keys
+# =======================
+*.pem
+*.key
+*.cert
+*.crt
+
+# Backend Specific
+# ================
+backend/logs/
+backend/pids/
+backend/*.pid
+backend/*.seed
+backend/*.pid.lock
+
+# Frontend Specific (Next.js)
+# ============================
+frontend/.next/
+frontend/out/
+frontend/.vercel
+
+# Temporary Files
+# ===============
+*.tmp
+*.temp
+.temp/
+
+# Package Manager Lock Files (optional - uncomment if needed)
+# ===========================================================
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Local Development
+# =================
+.local/
+.vite/
+
+# Additional Security
+# ===================
+*.private
+*.secret
+config/secrets.js
+config/secrets.json

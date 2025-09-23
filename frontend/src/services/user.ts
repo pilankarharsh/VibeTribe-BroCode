@@ -9,12 +9,8 @@ export async function getUser(userId: string) {
 
 export async function updateProfile(data: UpdateProfileRequest, userId: string) {
     try {
-        console.log('🔧 API updateProfile called with:', { data, userId });
         const url = `/api/users/${encodeURIComponent(userId)}`;
-        console.log('🌐 Making PATCH request to:', url);
-        
         const res = await api.patch<User>(url, data);
-        console.log('✅ API updateProfile success:', res.data);
         
         // Update the user in the auth store if this is the current user
         try {

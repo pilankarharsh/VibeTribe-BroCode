@@ -65,6 +65,19 @@ export interface Comment {
   createdAt: ISODateString;
 }
 
+// Comment with populated author data
+export interface PopulatedComment {
+  _id: ID;
+  postId: ID;
+  authorId: {
+    _id: ID;
+    username: string;
+    profilePicture?: string;
+  };
+  content: string;
+  createdAt: ISODateString;
+}
+
 // Like record shape
 export interface LikeRecord {
   _id: ID;

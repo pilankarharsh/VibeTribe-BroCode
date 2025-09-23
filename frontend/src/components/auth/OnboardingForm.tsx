@@ -14,14 +14,6 @@ export default function OnboardForm() {
   const router = useRouter();
   const { setLoading, setOnboarded, user, token } = useAuthStore();
   
-  // Debug auth state
-  console.log('🔐 Auth state:', {
-    hasUser: !!user,
-    userId: user?._id,
-    hasToken: !!token,
-    tokenLength: token?.length,
-    tokenPreview: token ? `${token.substring(0, 20)}...` : null
-  });
 
   const [step, setStep] = useState<Step>(1);
   const [displayName, setDisplayName] = useState("");
@@ -52,24 +44,18 @@ export default function OnboardForm() {
 
   const userIdFromToken = useMemo(() => {
     if (!token) {
-      console.warn('⚠️ No token available for user ID extraction');
       return null;
     }
     try {
       const parts = token.split(".");
-      console.log('🔍 Token parts:', parts.length);
       const part = parts[1];
       if (!part) {
-        console.warn('⚠️ Token missing payload part');
         return null;
       }
       const json = JSON.parse(atob(part.replace(/-/g, "+").replace(/_/g, "/")));
-      console.log('📝 Decoded token payload:', json);
       const userId = json?.id ?? null;
-      console.log('🆔 Extracted userId:', userId);
       return userId;
     } catch (error) {
-      console.error('❌ Token decoding failed:', error);
       return null;
     }
   }, [token]);
@@ -82,7 +68,6 @@ export default function OnboardForm() {
         setError("Please enter your fullname");
         return;
       }
-      console.log("✅ Step 1 completed, moving to Step 2");
       setStep(2);
     },
     [canContinueStep1]
@@ -93,32 +78,10 @@ export default function OnboardForm() {
       e.preventDefault();
       setError("");
       
-      // If user selected an avatar, upload it first
-      if (avatarFile) {
-        console.log("📤 Starting avatar upload...");
-        try {
-          setIsUploading(true);
-          const id = user?._id || userIdFromToken;
-          console.log("🆔 Uploading for userId:", id);
-
-          const url = await processAndUploadAvatar(avatarFile, id);
-          setAvatarUrl(url);
-          console.log("✅ Avatar uploaded successfully:", url);
-        } catch (err) {
-          console.error("❌ Avatar upload failed:", err);
-          const errorMessage = err instanceof Error ? err.message : 'Failed to upload avatar';
-          setError(errorMessage);
-          setIsUploading(false);
-          return;
-        } finally {
-          setIsUploading(false);
-        }
-      }
-
-      // Move to step 3
+      // Just move to step 3 - avatar upload will happen in finish()
       setStep(3);
     },
-    [avatarFile, user?._id, userIdFromToken]
+    []
   );
 
   const finish = useCallback(
@@ -136,20 +99,31 @@ export default function OnboardForm() {
       setIsUploading(true);
       setLoading(true);
       setError("");
-      console.log("💾 Saving onboarding details...");
 
       try {
+        let finalAvatarUrl = avatarUrl;
+
+        // If user selected an avatar, upload it first
+        if (avatarFile) {
+          try {
+            finalAvatarUrl = await processAndUploadAvatar(avatarFile, id);
+            setAvatarUrl(finalAvatarUrl);
+          } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Failed to upload avatar';
+            setError(errorMessage);
+            setIsUploading(false);
+            setLoading(false);
+            return;
+          }
+        }
+
         const payload = {
           displayName: displayName || undefined,
-          avatarUrl: avatarUrl || undefined,
+          avatarUrl: finalAvatarUrl || undefined,
           dob,
           gender: gender || undefined,
         };
-        console.log("📦 Payload:", payload);
-        console.log("🆔 Using userId:", id);
-        console.log("🌐 API URL:", `${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000/'}/api/users/${encodeURIComponent(id)}`);
         await updateProfile(payload, id);
-        console.log("✅ Profile updated");
         setOnboarded(true);
         router.replace("/home");
       } catch (err) {
@@ -220,7 +194,6 @@ export default function OnboardForm() {
               <AvatarUploader
                 userId={user?._id || userIdFromToken || "temp-user"}
                 onFileSelect={(file) => {
-                  console.log("📂 File selected:", file?.name);
                   setAvatarFile(file);
                   setError("");
                 }}

@@ -1,5 +1,5 @@
-import api from '@/lib/api';
-import { Post, CreatePostRequest, Comment } from '@/types';
+import api from '../lib/api';
+import { Post, PopulatedComment, CreatePostRequest, Comment } from '../types';
 
 export async function createPost(data: CreatePostRequest): Promise<Post> {
   const res = await api.post<Post>('/api/posts', data);
@@ -41,27 +41,36 @@ export async function isPostLikedByUser(postId: string, currentUserId?: string):
       return { isLiked: false };
     }
     
-    const res = await api.get(`/api/posts/${postId}/likes`);
-    const likingUsers = res.data; // Array of user objects who liked the post
+    const res = await api.get(`/api/posts/${postId}/is-liked`);
+    return { isLiked: res.data.isLiked };
+  } catch (likeCheckError: any) {
+    if (likeCheckError?.response?.status === 401) {
+      return { isLiked: false };
+    }
     
-    // Check if current user ID is in the list of users who liked the post
-    const isLiked = Array.isArray(likingUsers) && 
-      likingUsers.some((user: { _id: string }) => user._id === currentUserId);
-    
-    return { isLiked };
-  } catch (likeCheckError) {
-    console.error('Failed to check like status:', likeCheckError);
-    return { isLiked: false };
+    try {
+      const res = await api.get(`/api/posts/${postId}/likes`);
+      const likingUsers = res.data;
+      
+      const isLiked = Array.isArray(likingUsers) && 
+        likingUsers.some((user: { _id: string }) => {
+          return user._id === currentUserId;
+        });
+      
+      return { isLiked };
+    } catch (fallbackError) {
+      return { isLiked: false };
+    }
   }
 }
 
-export async function addComment(postId: string, content: string): Promise<Comment> {
-  const res = await api.post<Comment>(`/api/posts/${postId}/comments`, { content });
+export async function addComment(postId: string, content: string): Promise<PopulatedComment> {
+  const res = await api.post<PopulatedComment>(`/api/posts/${postId}/comments`, { content });
   return res.data;
 }
 
-export async function getComments(postId: string): Promise<Comment[]> {
-  const res = await api.get<Comment[]>(`/api/posts/${postId}/comments`);
+export async function getComments(postId: string): Promise<PopulatedComment[]> {
+  const res = await api.get<PopulatedComment[]>(`/api/posts/${postId}/comments`);
   return res.data;
 }
 

@@ -12,6 +12,12 @@ const postSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Performance indexes for feed queries
+postSchema.index({ authorId: 1, createdAt: -1 });
+postSchema.index({ createdAt: -1, reportsCount: 1 });
+postSchema.index({ likeCount: -1, createdAt: -1 });
+postSchema.index({ reportsCount: 1, likeCount: -1, createdAt: -1 });
+
 export default mongoose.model('Post', postSchema);
 
 
