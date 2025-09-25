@@ -43,8 +43,9 @@ export async function isPostLikedByUser(postId: string, currentUserId?: string):
     
     const res = await api.get(`/api/posts/${postId}/is-liked`);
     return { isLiked: res.data.isLiked };
-  } catch (likeCheckError: any) {
-    if (likeCheckError?.response?.status === 401) {
+  } catch (likeCheckError: unknown) {
+    const axiosError = likeCheckError as { response?: { status?: number } };
+    if (axiosError?.response?.status === 401) {
       return { isLiked: false };
     }
     

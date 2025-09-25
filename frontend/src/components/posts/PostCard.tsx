@@ -84,17 +84,20 @@ export default function PostCard({ post }: PostCardProps) {
         setLikeCount(prev => prev + 1);
         await likePost(post._id);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to toggle like:', error);
-      console.error('Error details:', error?.response?.data);
+      
+      // Type guard for axios error
+      const axiosError = error as { response?: { status?: number; data?: { error?: string } } };
+      console.error('Error details:', axiosError?.response?.data);
       
       // Revert optimistic update
       setIsLiked(previousLiked);
       setLikeCount(previousCount);
       
       // Handle specific error cases
-      if (error?.response?.status === 400) {
-        const errorMessage = error?.response?.data?.error || '';
+      if (axiosError?.response?.status === 400) {
+        const errorMessage = axiosError?.response?.data?.error || '';
         
         // Force refresh like status to sync with backend
         setTimeout(() => {
