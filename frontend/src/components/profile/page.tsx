@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '../../stores/authStore';
-import { updateProfile } from '../../services/user';
-import AvatarUploader from '../auth/avatarUploader';
-import { processAndUploadAvatar } from '../../lib/uploads';
-import './ProfileLayout.css';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/stores/authStore";
+import { updateProfile } from "@/services/user";
+import AppLayout from "@/components/layout/AppLayout";
+import AvatarUploader from "@/components/auth/avatarUploader";
+import { processAndUploadAvatar } from "@/lib/uploads";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -158,189 +158,306 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="profile-layout">
-      {/* Sidebar */}
-      <div className="profile-sidebar">
-        {/* Profile Info */}
-        <div className="profile-info">
-          <div className="profile-avatar-container">
-            <img
-              src={avatarUrl || "/default-avatar.png"}
-              alt="Profile"
-              className="profile-avatar"
-            />
-            {isEditing && !isCropping && (
-              <div className="avatar-upload-overlay">
-                <AvatarUploader
-                  userId={user._id}
-                  onFileSelect={(file) => {
-                    setAvatarFile(file);
-                    const previewUrl = URL.createObjectURL(file);
-                    setAvatarUrl(previewUrl);
-                    setError("");
-                  }}
-                  onError={(msg) => setError(msg)}
-                  onCroppingStateChange={setIsCropping}
-                />
-              </div>
-            )}
-          </div>
-          
-          <div className="profile-details">
-            <h2 className="profile-name">{user.displayName || user.username}</h2>
-            <p className="profile-username">@{user.username}</p>
-            <p className="profile-bio">✏️ Add your bio here...</p>
-          </div>
+    <AppLayout>
+      <div className="profile-page">
+        <div className="container">
+          <div className="profile-container">
+            {/* Header */}
+            <header className="profile-header">
+              <h1 className="h2">My Profile</h1>
+              <p className="body" style={{ color: 'var(--text-muted)' }}>
+                Manage your VibeTribe profile information
+              </p>
+            </header>
 
-          {/* Stats */}
-          <div className="profile-stats">
-            <div className="stat">
-              <span className="stat-number">{user.followersCount || 0}</span>
-              <span className="stat-label">followers</span>
+            {/* Profile Card */}
+            <div className="profile-card card">
+              <form onSubmit={handleSave}>
+                <div className="profile-form">
+                  {/* Avatar Section */}
+                  <div className="avatar-section">
+                    <div className="current-avatar">
+                      <img
+                        src={avatarUrl || "/default-avatar.png"}
+                        alt="Profile"
+                        className="profile-avatar"
+                      />
+                    </div>
+                    {isEditing && !isCropping && (
+                      <div className="avatar-upload">
+                        <AvatarUploader
+                          userId={user._id}
+                          onFileSelect={(file) => {
+                            console.log("🔄 Avatar file selected in profile:", file.name, file.size, "bytes");
+                            setAvatarFile(file);
+                            // Create preview URL for the cropped image
+                            const previewUrl = URL.createObjectURL(file);
+                            setAvatarUrl(previewUrl);
+                            setError("");
+                            console.log("💾 Avatar file state updated, save button should enable");
+                          }}
+                          onError={(msg) => setError(msg)}
+                          onCroppingStateChange={setIsCropping}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Form Fields */}
+                  <div className="form-fields">
+                    <div className="field-row">
+                      <div className="field">
+                        <label className="auth-input-lable">Display Name</label>
+                        <input
+                          className="auth-input"
+                          value={displayName}
+                          onChange={(e) => setDisplayName(e.target.value)}
+                          disabled={!isEditing}
+                          placeholder="Your display name"
+                        />
+                      </div>
+                      <div className="field">
+                        <label className="auth-input-lable">Username</label>
+                        <input
+                          className="auth-input"
+                          value={username}
+                          onChange={(e) => setUsername(validateUsername(e.target.value))}
+                          disabled={!isEditing}
+                          placeholder="Only lowercase letters, numbers, underscores"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="field">
+                      <label className="auth-input-lable">Email</label>
+                      <input
+                        className="auth-input"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(validateEmail(e.target.value))}
+                        disabled={!isEditing}
+                        placeholder="your.email@example.com"
+                      />
+                    </div>
+
+                    <div className="field-row">
+                      <div className="field">
+                        <label className="auth-input-lable">Date of Birth</label>
+                        <input
+                          className="auth-input"
+                          type="date"
+                          value={dob}
+                          onChange={(e) => setDob(e.target.value)}
+                          disabled={!isEditing}
+                        />
+                      </div>
+                      <div className="field">
+                        <label className="auth-input-lable">Gender</label>
+                        <select
+                          className="auth-input"
+                          value={gender}
+                          onChange={(e) => setGender(e.target.value as "" | "male" | "female" | "other" | "prefer-not-to-say")}
+                          disabled={!isEditing}
+                        >
+                          <option value="">Select gender</option>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                          <option value="other">Other</option>
+                          <option value="prefer-not-to-say">Prefer not to say</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Status Messages */}
+                  {error && <p className="auth-error">{error}</p>}
+                  {success && <p className="success-message">{success}</p>}
+
+                  {/* Action Buttons */}
+                  <div className="profile-actions">
+                    {!isEditing ? (
+                      <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={handleEditToggle}
+                      >
+                        Edit Profile
+                      </button>
+                    ) : (
+                      <div className="edit-actions">
+                        <button
+                          type="submit"
+                          className="btn btn-primary"
+                          disabled={isUploading || isCropping || !hasChanges()}
+                        >
+                          {isUploading ? "Saving..." : "Save Changes"}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          onClick={handleEditToggle}
+                          disabled={isUploading || isCropping}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </form>
             </div>
-            <div className="stat">
-              <span className="stat-number">{user.followingCount || 0}</span>
-              <span className="stat-label">following</span>
-            </div>
-            <div className="stat">
-              <span className="stat-number">0</span>
-              <span className="stat-label">posts</span>
-            </div>
           </div>
-
-          {/* Action Buttons */}
-          <div className="profile-buttons">
-            {!isEditing ? (
-              <button className="edit-profile-btn" onClick={handleEditToggle}>
-                Edit Profile
-              </button>
-            ) : (
-              <div className="edit-buttons">
-                <button 
-                  className="save-btn"
-                  onClick={handleSave}
-                  disabled={isUploading || isCropping || !hasChanges()}
-                >
-                  {isUploading ? "Saving..." : "Save Changes"}
-                </button>
-                <button 
-                  className="cancel-btn"
-                  onClick={handleEditToggle}
-                  disabled={isUploading || isCropping}
-                >
-                  Cancel
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Navigation */}
-        <nav className="profile-nav">
-          <div className="nav-item active">
-            <span className="nav-icon">👥</span>
-            <span className="nav-text">Friends feed</span>
-          </div>
-          <div className="nav-item">
-            <span className="nav-icon">⭐</span>
-            <span className="nav-text">Featured Feed</span>
-          </div>
-          <div className="nav-item logout">
-            <span className="nav-icon">🚪</span>
-            <span className="nav-text">Logout</span>
-          </div>
-        </nav>
-
-        {/* Footer */}
-        <div className="sidebar-footer">
-          <p>Made with love and late nights in Goa</p>
-          <p>Version 1.0 (2025)</p>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="profile-main">
-        {isEditing ? (
-          <div className="edit-form">
-            <h1>Edit Profile</h1>
-            
-            {/* Form Fields */}
-            <form onSubmit={handleSave}>
-              <div className="form-grid">
-                <div className="field">
-                  <label>Display Name</label>
-                  <input
-                    type="text"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    placeholder="Your display name"
-                  />
-                </div>
-                <div className="field">
-                  <label>Username</label>
-                  <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(validateUsername(e.target.value))}
-                    placeholder="Only lowercase letters, numbers, underscores"
-                  />
-                </div>
-                <div className="field">
-                  <label>Email</label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(validateEmail(e.target.value))}
-                    placeholder="your.email@example.com"
-                  />
-                </div>
-                <div className="field">
-                  <label>Date of Birth</label>
-                  <input
-                    type="date"
-                    value={dob}
-                    onChange={(e) => setDob(e.target.value)}
-                  />
-                </div>
-                <div className="field">
-                  <label>Gender</label>
-                  <select
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value as "" | "male" | "female" | "other" | "prefer-not-to-say")}
-                  >
-                    <option value="">Select gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                    <option value="prefer-not-to-say">Prefer not to say</option>
-                  </select>
-                </div>
-              </div>
+      <style jsx>{`
+        .profile-page {
+          padding: 2rem 0;
+          min-height: 100vh;
+        }
 
-              {/* Status Messages */}
-              {error && <p className="error-message">{error}</p>}
-              {success && <p className="success-message">{success}</p>}
-            </form>
-          </div>
-        ) : (
-          <div className="feed-content">
-            <div className="feed-header">
-              <h1>Friends only feed</h1>
-              <div className="vibe-logo">
-                <span className="logo-icon">🤟</span>
-                <span className="logo-text">vibetribe</span>
-              </div>
-            </div>
-            
-            <div className="feed-placeholder">
-              <p>Something is cooking...👀</p>
-              <div className="cooking-animation">
-                <span className="hand-icon">🤟</span>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+        .profile-container {
+          max-width: 800px;
+          margin: 0 auto;
+        }
+
+        .profile-header {
+          text-align: center;
+          margin-bottom: 2rem;
+        }
+
+        .profile-header h1 {
+          margin-bottom: 0.5rem;
+        }
+
+        .profile-card {
+          padding: 2rem;
+          margin-bottom: 2rem;
+        }
+
+        .profile-form {
+          display: flex;
+          flex-direction: column;
+          gap: 2rem;
+        }
+
+        .avatar-section {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .current-avatar {
+          position: relative;
+        }
+
+        .profile-avatar {
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 3px solid var(--color-border);
+          transition: border-color 0.2s ease;
+        }
+
+        .profile-avatar:hover {
+          border-color: var(--brand-primary);
+        }
+
+        .avatar-upload {
+          width: 100%;
+          max-width: 300px;
+        }
+
+        .form-fields {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+
+        .field-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+        }
+
+        .field {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .success-message {
+          color: var(--color-success-green);
+          font-size: var(--fs-body-15);
+          margin: 0.5rem 0 0;
+          text-align: center;
+          padding: 0.75rem;
+          background: rgba(46, 204, 113, 0.1);
+          border: 1px solid var(--color-success-green);
+          border-radius: var(--input-radius);
+        }
+
+        .profile-actions {
+          display: flex;
+          justify-content: center;
+          margin-top: 1rem;
+        }
+
+        .edit-actions {
+          display: flex;
+          gap: 1rem;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+
+        .edit-actions .btn {
+          min-width: 120px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+          .profile-page {
+            padding: 1rem 0;
+          }
+
+          .profile-card {
+            padding: 1.5rem;
+            margin: 0 1rem;
+          }
+
+          .field-row {
+            grid-template-columns: 1fr;
+          }
+
+          .edit-actions {
+            flex-direction: column;
+            width: 100%;
+          }
+
+          .edit-actions .btn {
+            width: 100%;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .profile-header {
+            text-align: center;
+            padding: 0 1rem;
+          }
+
+          .profile-card {
+            margin: 0 0.5rem;
+            padding: 1rem;
+          }
+
+          .profile-avatar {
+            width: 100px;
+            height: 100px;
+          }
+        }
+      `}</style>
+    </AppLayout>
   );
 }
